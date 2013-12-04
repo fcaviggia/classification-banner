@@ -1,0 +1,43 @@
+Classification-Banner
+=====================
+
+Classification Banner is a python script that will display the classification level banner of a session with a variety of configuration options.  This script can help government and possibly private customers display a notification that that sensitive material is being displayed - for example PII or SECRET Material being processed in a graphical session. The script has been tested on a variety of graphical environments such as GNOME2, GNOME3, KDE, twm, icewm, and Cinnamon.
+
+
+Classification Banner Usage
+===========================
+
+Options:
+
+-m, --message: Classification Message (Defualt: 'UNCLASSIFIED')
+
+-f, --fgcolor: Foreground Color (Default: '#000000')
+
+-b, --bgcolor: Background Color (Defualt: '#599693')
+
+--font: Font Face (Defualt: 'Arial')
+
+--size: Font Size (Defualt: 'small')
+
+--weight: Font Weight (Defualt: 'bold')
+
+--top: Display Top Banner (Defualt: 'Y')
+
+--bottom: Display Bottom Banner (Defualt: 'Y')
+
+-h, --help: This Message
+
+
+Examples:
+
+    Default (UNCLASSIFIED)
+
+        ./classification-banner.py &
+
+    SECRET
+
+        ./classification-banner.py --message='SECRET' --fgcolor='#FFFFFF' --bgcolor='#FF0000' &
+
+    TOP SECRET
+
+        ./classification-banner.py --message='TOP SECRET' --bgcolor='#FFFF00' &
