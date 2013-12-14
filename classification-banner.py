@@ -2,7 +2,7 @@
 # Classification Banner
 # Author: Frank Caviggia (fcaviggia@gmail.com)
 # Copyright: Frank Caviggia, 2013
-# Version: 1.1
+# Version: 1.2
 # License: GPLv2
 
 import getopt, sys, os
@@ -15,7 +15,7 @@ except:
 
 # Classifion Banner Class
 class Classification_Banner:
-        def __init__(self,message="UNCLASSIFIED",fgcolor="#000000",bgcolor="#599653",face="Arial",size="small",weight="bold"):
+        def __init__(self,message="UNCLASSIFIED",fgcolor="#000000",bgcolor="#599653",face="liberation-sans",size="small",weight="bold"):
                 # Create Main Window
                 self.window = gtk.Window()
                 self.window.set_position(gtk.WIN_POS_CENTER)
@@ -122,7 +122,7 @@ class Display_Banner:
 		try:
 			face
 		except:
-			face="Arial"
+			face="liberation-sans"
 		try:
 			size
 		except:
