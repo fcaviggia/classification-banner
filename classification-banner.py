@@ -15,7 +15,7 @@ except:
 
 # Classifion Banner Class
 class Classification_Banner:
-        def __init__(self,message="UNCLASSIFIED",fgcolor="#000000",bgcolor="#599653",face="liberation-sans",size="small",weight="bold"):
+        def __init__(self,message="UNCLASSIFIED",fgcolor="#000000",bgcolor="#00CC00",face="liberation-sans",size="small",weight="bold"):
                 # Create Main Window
                 self.window = gtk.Window()
                 self.window.set_position(gtk.WIN_POS_CENTER)
@@ -70,8 +70,8 @@ class Display_Banner:
 				print "  Options:"
 				print "     -m, --message: Classification Message (Defualt: 'UNCLASSIFIED')"
 				print "     -f, --fgcolor: Foreground Color (Default: '#000000')"
-				print "     -b, --bgcolor: Background Color (Defualt: '#599693') "
-				print "     --font: Font Face (Defualt: 'Arial')"
+				print "     -b, --bgcolor: Background Color (Defualt: '#00CC00') "
+				print "     --font: Font Face (Defualt: 'liberation-sans')"
 				print "     --size: Font Size (Defualt: 'small')"
 				print "     --weight: Font Weight (Defualt: 'bold')"
 				print "     --top: Display Top Banner (Defualt: 'Y')"
@@ -83,11 +83,17 @@ class Display_Banner:
 				print "    Default (UNCLASSIFIED)"
 				print "    ./classification-banner.py &"
 				print ""
+				print "    CONFIDENTIAL"
+				print "    ./classification-banner.py --message='SECRET' --fgcolor='#FFFFFF' --bgcolor='#33FFFF' &"
+				print ""
 				print "    SECRET"
 				print "    ./classification-banner.py --message='SECRET' --fgcolor='#FFFFFF' --bgcolor='#FF0000' &"
 				print ""
 				print "    TOP SECRET"
-				print "    ./classification-banner.py --message='TOP SECRET' --bgcolor='#FFFF00' &"
+				print "    ./classification-banner.py --message='TOP SECRET' --fgcolor='#FFFFFF' --bgcolor='#FF9900' &"
+				print ""
+				print "    TOP SECRET//SCI"
+				print "    ./classification-banner.py --message='TOP SECRET//SCI' --bgcolor='#FFFF00' &"
 				print ""
 				sys.exit()
 			elif opt in ('-m','--message'):
@@ -118,7 +124,7 @@ class Display_Banner:
 		try:
 			bgcolor
 		except:
-			bgcolor="#599653"
+			bgcolor="#00CC00"
 		try:
 			face
 		except:
