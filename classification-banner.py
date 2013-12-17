@@ -84,7 +84,7 @@ class Display_Banner:
 				print "    ./classification-banner.py &"
 				print ""
 				print "    CONFIDENTIAL"
-				print "    ./classification-banner.py --message='SECRET' --fgcolor='#FFFFFF' --bgcolor='#33FFFF' &"
+				print "    ./classification-banner.py --message='CONFIDENTIAL' --bgcolor='#33FFFF' &"
 				print ""
 				print "    SECRET"
 				print "    ./classification-banner.py --message='SECRET' --fgcolor='#FFFFFF' --bgcolor='#FF0000' &"
