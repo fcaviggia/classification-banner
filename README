@@ -15,34 +15,33 @@ Classification Banner Usage
 Options:
 
 -m, --message: Classification Message (Defualt: 'UNCLASSIFIED')
-
 -f, --fgcolor: Foreground Color (Default: '#000000')
-
--b, --bgcolor: Background Color (Defualt: '#599693')
-
---font: Font Face (Defualt: 'Arial')
-
+-b, --bgcolor: Background Color (Defualt: '#00CC00')
+--font: Font Face (Defualt: 'liberation-sans')
 --size: Font Size (Defualt: 'small')
-
 --weight: Font Weight (Defualt: 'bold')
-
 --top: Display Top Banner (Defualt: 'Y')
-
 --bottom: Display Bottom Banner (Defualt: 'Y')
-
 -h, --help: This Message
-
 
 Examples:
 
     Default (UNCLASSIFIED)
 
         ./classification-banner.py &
-
+        
+    CONFIDENTIAL
+    
+        ./classification-banner.py --message='SECRET' --fgcolor='#FFFFFF' --bgcolor='#33FFFF' &
+    
     SECRET
-
+        
         ./classification-banner.py --message='SECRET' --fgcolor='#FFFFFF' --bgcolor='#FF0000' &
-
+    
     TOP SECRET
-
-        ./classification-banner.py --message='TOP SECRET' --bgcolor='#FFFF00' &
+        
+        ./classification-banner.py --message='TOP SECRET' --fgcolor='#FFFFFF' --bgcolor='#FF9900' &
+        
+    TOP SECRET//SCI
+        
+        ./classification-banner.py --message='TOP SECRET//SCI' --bgcolor='#FFFF00' &
