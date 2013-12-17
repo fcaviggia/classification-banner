@@ -116,7 +116,7 @@ class Display_Banner:
 		# Use Global Configuration		
 		try:
 			config = {}
-			execfile("/etc/classification",config)
+			execfile("/etc/classification-banner",config)
 			message = config['message']
 			bgcolor = config['bgcolor']
 			fgcolor = config['fgcolor']
