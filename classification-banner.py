@@ -112,6 +112,17 @@ class Display_Banner:
 				top = arg
 			elif opt == '--bottom':
 				bottom = arg
+		
+		# Use Global Configuration		
+		try:
+			config = {}
+			execfile("/etc/classification",config)
+			message = config['message']
+			bgcolor = config['bgcolor']
+			fgcolor = config['fgcolor']
+		except:
+			pass
+		
 
 		try:
 			message
