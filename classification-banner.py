@@ -5,9 +5,10 @@
 # Version: 1.2
 # License: GPLv2
 
-import getopt
 import sys
 import os
+import optparse
+
 try:
     os.environ['DISPLAY']
     import pygtk
@@ -81,120 +82,61 @@ class Display_Banner:
     """Display Classification Banner Message"""
 
     def __init__(self):
-        options, remainder = getopt.gnu_getopt(sys.argv[1:], 'm:f:b:h', [
-                                               'message=', 'fgcolor=', 'bgcolor=', 'font=', 'size=', 'weight=', 'top=', 'bottom=', 'help'])
-        for opt, arg in options:
-            if opt in ('-h', '--help'):
-                print("")
-                print("Classification Banner Usage")
-                print("====================================")
-                print("")
-                print("  Options:")
-                print("     -m, --message: Classification Message (Defualt: 'UNCLASSIFIED')")
-                print("     -f, --fgcolor: Foreground Color (Default: '#000000')")
-                print("     -b, --bgcolor: Background Color (Defualt: '#00CC00') ")
-                print("     --font: Font Face (Defualt: 'liberation-sans')")
-                print("     --size: Font Size (Defualt: 'small')")
-                print("     --weight: Font Weight (Defualt: 'bold')")
-                print("     --top: Display Top Banner (Defualt: 'Y')")
-                print("     --bottom: Display Bottom Banner (Defualt: 'Y')")
-                print("     -h, --help: This Message")
-                print("")
-                print("  Examples:")
-                print("")
-                print("    Default (UNCLASSIFIED)")
-                print("    ./classification-banner.py &")
-                print("")
-                print("    CONFIDENTIAL")
-                print("    ./classification-banner.py --message='CONFIDENTIAL' --bgcolor='#33FFFF' &")
-                print("")
-                print("    SECRET")
-                print("    ./classification-banner.py --message='SECRET' --fgcolor='#FFFFFF' --bgcolor='#FF0000' &")
-                print("")
-                print("    TOP SECRET")
-                print("    ./classification-banner.py --message='TOP SECRET' --fgcolor='#FFFFFF' --bgcolor='#FF9900' &")
-                print("")
-                print("    TOP SECRET//SCI")
-                print("    ./classification-banner.py --message='TOP SECRET//SCI' --bgcolor='#FFFF00' &")
-                print("")
-                sys.exit()
-            elif opt in ('-m', '--message'):
-                message = arg
-            elif opt in ('-f', '--fgcolor'):
-                fgcolor = arg
-            elif opt in ('-b', '--bgcolor'):
-                bgcolor = arg
-            elif opt == '--font':
-                face = arg
-            elif opt == '--size':
-                size = arg
-            elif opt == '--weight':
-                weight = arg
-            elif opt == '--top':
-                top = arg
-            elif opt == '--bottom':
-                bottom = arg
 
-        # Use Global Configuration
+        # First read the global configuration
+        config = {}
         try:
-            config = {}
             execfile("/etc/classification-banner", config)
-            message = config['message']
-            bgcolor = config['bgcolor']
-            fgcolor = config['fgcolor']
         except:
             pass
+        defaults = {}
+        defaults["message"] = config.get("message", "UNCLASSIFIED")
+        defaults["fgcolor"] = config.get("fgcolor", "#000000")
+        defaults["bgcolor"] = config.get("bgcolor", "#00CC00")
+        defaults["face"] = config.get("face", "liberation-sans")
+        defaults["size"] = config.get("size", "small")
+        defaults["weight"] = config.get("weight", "bold")
+        defaults["show_top"] = config.get("show_top", True)
+        defaults["show_bottom"] = config.get("show_bottom", True)
 
-        try:
-            message
-        except:
-            message = "UNCLASSIFIED"
-        try:
-            fgcolor
-        except:
-            fgcolor = "#000000"
-        try:
-            bgcolor
-        except:
-            bgcolor = "#00CC00"
-        try:
-            face
-        except:
-            face = "liberation-sans"
-        try:
-            size
-        except:
-            size = "small"
-        try:
-            weight
-        except:
-            weight = "bold"
-        try:
-            top
-        except:
-            top = 'Y'
-        try:
-            bottom
-        except:
-            bottom = 'Y'
+        # Use the global config to set defaults for command line options
+        parser = optparse.OptionParser()
+        parser.add_option("-m", "--message", default=defaults["message"],
+            help="Classification message")
+        parser.add_option("-f", "--fgcolor", default=defaults["fgcolor"],
+            help="Foreground (text) color")
+        parser.add_option("-b", "--bgcolor", default=defaults["bgcolor"],
+            help="Background color")
+        parser.add_option("--face", default=defaults["face"], help="Font face")
+        parser.add_option("--size", default=defaults["size"], help="Font size")
+        parser.add_option("--weight", default=defaults["weight"],
+            help="Font weight")
+        parser.add_option("--hide-top", default=defaults["show_top"],
+            dest="show_top", action="store_false",
+            help="Disable the top banner")
+        parser.add_option("--hide-bottom", default=defaults["show_bottom"],
+            dest="show_bottom", action="store_false",
+            help="Disable the bottom banner")
 
-        if top == 'Y':
+        options, args = parser.parse_args()
+
+        if options.show_top:
             self.top = Classification_Banner(
-                message,
-                fgcolor,
-                bgcolor,
-                face,
-                size,
-                weight)
+                options.message,
+                options.fgcolor,
+                options.bgcolor,
+                options.face,
+                options.size,
+                options.weight)
             self.top.window.move(0, 0)
-        if bottom == 'Y':
+        if options.show_bottom:
             self.bottom = Classification_Banner(
-                message,
-                fgcolor,
-                bgcolor,
-                face,
-                size,
-                weight)
+                options.message,
+                options.fgcolor,
+                options.bgcolor,
+                options.face,
+                options.size,
+                options.weight)
             self.bottom.window.move(0, self.bottom.vres)
 
 # Main Program Loop
