@@ -13,7 +13,7 @@ try:
     import pygtk
     import gtk
 except:
-    print "Error: DISPLAY environment varible not set."
+    print("Error: DISPLAY environment varible not set.")
     sys.exit(1)
 
 # Classifion Banner Class
@@ -85,38 +85,38 @@ class Display_Banner:
                                                'message=', 'fgcolor=', 'bgcolor=', 'font=', 'size=', 'weight=', 'top=', 'bottom=', 'help'])
         for opt, arg in options:
             if opt in ('-h', '--help'):
-                print ""
-                print "Classification Banner Usage"
-                print "===================================="
-                print ""
-                print "  Options:"
-                print "     -m, --message: Classification Message (Defualt: 'UNCLASSIFIED')"
-                print "     -f, --fgcolor: Foreground Color (Default: '#000000')"
-                print "     -b, --bgcolor: Background Color (Defualt: '#00CC00') "
-                print "     --font: Font Face (Defualt: 'liberation-sans')"
-                print "     --size: Font Size (Defualt: 'small')"
-                print "     --weight: Font Weight (Defualt: 'bold')"
-                print "     --top: Display Top Banner (Defualt: 'Y')"
-                print "     --bottom: Display Bottom Banner (Defualt: 'Y')"
-                print "     -h, --help: This Message"
-                print ""
-                print "  Examples:"
-                print ""
-                print "    Default (UNCLASSIFIED)"
-                print "    ./classification-banner.py &"
-                print ""
-                print "    CONFIDENTIAL"
-                print "    ./classification-banner.py --message='CONFIDENTIAL' --bgcolor='#33FFFF' &"
-                print ""
-                print "    SECRET"
-                print "    ./classification-banner.py --message='SECRET' --fgcolor='#FFFFFF' --bgcolor='#FF0000' &"
-                print ""
-                print "    TOP SECRET"
-                print "    ./classification-banner.py --message='TOP SECRET' --fgcolor='#FFFFFF' --bgcolor='#FF9900' &"
-                print ""
-                print "    TOP SECRET//SCI"
-                print "    ./classification-banner.py --message='TOP SECRET//SCI' --bgcolor='#FFFF00' &"
-                print ""
+                print("")
+                print("Classification Banner Usage")
+                print("====================================")
+                print("")
+                print("  Options:")
+                print("     -m, --message: Classification Message (Defualt: 'UNCLASSIFIED')")
+                print("     -f, --fgcolor: Foreground Color (Default: '#000000')")
+                print("     -b, --bgcolor: Background Color (Defualt: '#00CC00') ")
+                print("     --font: Font Face (Defualt: 'liberation-sans')")
+                print("     --size: Font Size (Defualt: 'small')")
+                print("     --weight: Font Weight (Defualt: 'bold')")
+                print("     --top: Display Top Banner (Defualt: 'Y')")
+                print("     --bottom: Display Bottom Banner (Defualt: 'Y')")
+                print("     -h, --help: This Message")
+                print("")
+                print("  Examples:")
+                print("")
+                print("    Default (UNCLASSIFIED)")
+                print("    ./classification-banner.py &")
+                print("")
+                print("    CONFIDENTIAL")
+                print("    ./classification-banner.py --message='CONFIDENTIAL' --bgcolor='#33FFFF' &")
+                print("")
+                print("    SECRET")
+                print("    ./classification-banner.py --message='SECRET' --fgcolor='#FFFFFF' --bgcolor='#FF0000' &")
+                print("")
+                print("    TOP SECRET")
+                print("    ./classification-banner.py --message='TOP SECRET' --fgcolor='#FFFFFF' --bgcolor='#FF9900' &")
+                print("")
+                print("    TOP SECRET//SCI")
+                print("    ./classification-banner.py --message='TOP SECRET//SCI' --bgcolor='#FFFF00' &")
+                print("")
                 sys.exit()
             elif opt in ('-m', '--message'):
                 message = arg
