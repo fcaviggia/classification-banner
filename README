@@ -1,41 +1,56 @@
 Classification-Banner
 =====================
 
-Classification Banner is a python script that will display the classification level banner of a session with a variety of configuration options.  This script can help government and possibly private customers display a notification that that sensitivematerial is being displayed - for example PII or SECRET Material being processed in a graphical session. The script has been tested on a variety of graphical environmentssuch as GNOME2, GNOME3, KDE, twm, icewm, and Cinnamon.
+Classification Banner is a python script that will display the
+classification level banner of a session with a variety of
+configuration options.  This script can help government and
+possibly private customers display a notification that that
+sensitive material is being displayed - for example PII or
+SECRET Material being processed in a graphical session. The
+script has been tested on a variety of graphical environments
+such as GNOME2, GNOME3, KDE, twm, icewm, and Cinnamon.
 
 Classification Banner Usage
 ===========================
 
-Options:
+Options should be placed in the '/etc/classification-banner' file.
 
--m, --message: Classification Message (Defualt: 'UNCLASSIFIED')
--f, --fgcolor: Foreground Color (Default: '#000000')
--b, --bgcolor: Background Color (Defualt: '#00CC00')
---font: Font Face (Defualt: 'liberation-sans')
---size: Font Size (Defualt: 'small')
---weight: Font Weight (Defualt: 'bold')
---top: Display Top Banner (Defualt: 'Y')
---bottom: Display Bottom Banner (Defualt: 'Y')
--h, --help: This Message
+ message      - The classification level to display (Default: 'UNCLASSIFIED')
+ fgcolor      - Foreground color of the text to display (Default: '#00CC00' "Green")
+ bgcolor      - Background color of the banner the text is against (Default: '#000000' "Black")
+ face         - Font face to use for the displayed text (Default: 'liberation-sans')
+ size         - Size of font to use for text (Default: 'small')
+ weight       - Bold or normal (Defualt: 'bold')
+ show_top     - Show top banner (Defualt: True)
+ show_bottom  - Show bottom banner (Default: True)
 
-Examples:
+Examples
+========
+
+These are examples for the configuration of the Classification Banner
+using the '/etc/classification-banner' file for various classifications
+based upon generally accepted color guidelines in the DoD/IC.
 
     Default (UNCLASSIFIED)
-
-        ./classification-banner.py &
         
     CONFIDENTIAL
     
-        ./classification-banner.py --message='CONFIDENTIAL' --bgcolor='#33FFFF' &
+        message='CONFIDENTIAL'
+        bgcolor='#33FFFF'
     
     SECRET
         
-        ./classification-banner.py --message='SECRET' --fgcolor='#FFFFFF' --bgcolor='#FF0000' &
+        message='SECRET'
+        fgcolor='#FFFFFF'
+        bgcolor='#FF0000'
     
     TOP SECRET
         
-        ./classification-banner.py --message='TOP SECRET' --fgcolor='#FFFFFF' --bgcolor='#FF9900' &
+        message='TOP SECRET'
+        fgcolor='#FFFFFF'
+        bgcolor='#FF9900'
         
     TOP SECRET//SCI
         
-        ./classification-banner.py --message='TOP SECRET//SCI' --bgcolor='#FFFF00' &
+        message='TOP SECRET//SCI'
+        bgcolor='#FFFF00'
