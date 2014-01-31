@@ -50,11 +50,18 @@ class Classification_Banner:
         self.window.set_decorated(False)
         self.window.set_keep_above(True)
         self.window.set_app_paintable(True)
-        self.display = gtk.gdk.display_get_default()
-        self.screen = self.display.get_default_screen()
-        self.hres = self.screen.get_width()
-        self.vres = self.screen.get_height()
-        self.window.set_default_size(self.hres, 5)
+        # Try Xrandr to determine primary monitor resolution
+    	try:
+	    	self.screen = os.popen("xrandr | grep primary | awk '{ print $4 }'").readlines()[0]
+	    	self.hres = self.screen.split('x')[0]
+	    	self.vres = self.screen.split('x')[1].split('+')[0]
+        # Failback to GTK method
+	    except:
+		    self.display = gtk.gdk.display_get_default()
+		    self.screen = self.display.get_default_screen()
+		    self.hres = self.screen.get_width()
+		    self.vres = self.screen.get_height()
+        self.window.set_default_size(int(self.hres), 5)
 
         # Create Main Vertical Box to Populate
         self.vbox = gtk.VBox()
@@ -137,7 +144,7 @@ class Display_Banner:
                 options.face,
                 options.size,
                 options.weight)
-            self.bottom.window.move(0, self.bottom.vres)
+            self.bottom.window.move(0, int(self.bottom.vres))
 
 # Main Program Loop
 if __name__ == "__main__":
