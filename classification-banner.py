@@ -2,7 +2,7 @@
 # Classification Banner
 # Author: Frank Caviggia (fcaviggia@gmail.com)
 # Copyright: Frank Caviggia, 2013
-# Version: 1.2
+# Version: 1.3
 # License: GPLv2
 
 import sys
@@ -56,11 +56,11 @@ class Classification_Banner:
 	    	self.hres = self.screen.split('x')[0]
 	    	self.vres = self.screen.split('x')[1].split('+')[0]
         # Failback to GTK method
-	    except:
-		    self.display = gtk.gdk.display_get_default()
-		    self.screen = self.display.get_default_screen()
-		    self.hres = self.screen.get_width()
-		    self.vres = self.screen.get_height()
+	except:
+		self.display = gtk.gdk.display_get_default()
+		self.screen = self.display.get_default_screen()
+		self.hres = self.screen.get_width()
+		self.vres = self.screen.get_height()
         self.window.set_default_size(int(self.hres), 5)
 
         # Create Main Vertical Box to Populate
