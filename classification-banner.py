@@ -2,7 +2,7 @@
 # Classification Banner
 # Author: Frank Caviggia (fcaviggia@gmail.com)
 # Copyright: Frank Caviggia, 2013
-# Version: 1.3
+# Version: 1.3.1
 # License: GPLv2
 
 import sys
@@ -50,13 +50,18 @@ class Classification_Banner:
         self.window.set_decorated(False)
         self.window.set_keep_above(True)
         self.window.set_app_paintable(True)
-        # Try Xrandr to determine primary monitor resolution
+        # Try Xrandr to determine primary monitor resolution #1
     	try:
 	    	self.screen = os.popen("xrandr | grep primary | awk '{ print $4 }'").readlines()[0]
 	    	self.hres = self.screen.split('x')[0]
 	    	self.vres = self.screen.split('x')[1].split('+')[0]
+        # Try Xrandr to determine primary monitor resolution #2
+    	except:
+	    	self.screen = os.popen("xrandr | grep connected | awk '{ print $3 }'").readlines()[0]
+	    	self.hres = self.screen.split('x')[0]
+	    	self.vres = self.screen.split('x')[1].split('+')[0]
         # Failback to GTK method
-	except:
+	else:
 		self.display = gtk.gdk.display_get_default()
 		self.screen = self.display.get_default_screen()
 		self.hres = self.screen.get_width()
