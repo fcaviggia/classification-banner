@@ -2,7 +2,7 @@
 # Classification Banner
 # Author: Frank Caviggia (fcaviggia@gmail.com)
 # Copyright: Frank Caviggia, 2013
-# Version: 1.3.1
+# Version: 1.4
 # License: GPLv2
 
 import sys
@@ -34,14 +34,15 @@ class Classification_Banner:
         size    -- Size of font to use for text
         weight  -- Bold or normal
         """
+    	# Dynamic Resolution Scaling
+    	self.monitor = gtk.gdk.Screen()
+	self.monitor.connect("size-changed", self.resize)
+	self.monitor.connect("monitors-changed", self.resize)
 
         # Create Main Window
         self.window = gtk.Window()
         self.window.set_position(gtk.WIN_POS_CENTER)
-        self.window.connect("delete_event", self.refresh)
-        self.window.connect("destroy", self.refresh)
         self.window.connect("hide", self.restore)
-        self.window.connect("window-state-event", self.restore)
         self.window.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse(bgcolor))
         self.window.set_property('skip-taskbar-hint', True)
         self.window.set_property('skip-pager-hint', True)
@@ -82,12 +83,14 @@ class Classification_Banner:
         self.window.show_all()
         self.width, self.height = self.window.get_size()
 
-    def refresh(self, widget, data=None):
-        run = Display_Banner()
-        return True
-
+    # Maximize Screen
     def restore(self, widget, data=None):
         self.window.present()
+        return True
+
+    # Destroy Window on Resize (Display Banner Will Relaunch)
+    def resize(self, widget, data=None):
+        self.window.destroy()
         return True
 
 class Display_Banner:
@@ -95,7 +98,17 @@ class Display_Banner:
 
     def __init__(self):
 
-        # First read the global configuration
+    	# Dynamic Resolution Scaling
+    	self.monitor = gtk.gdk.Screen()
+	self.monitor.connect("size-changed", self.resize)
+	self.monitor.connect("monitors-changed", self.resize)
+
+	# Launch Banner
+	self.config, self.args = self.configure()
+	self.execute(self.config)
+
+    # Read Global configuration
+    def configure(self):
         config = {}
         try:
             execfile("/etc/classification-banner", config)
@@ -131,27 +144,37 @@ class Display_Banner:
             help="Disable the bottom banner")
 
         options, args = parser.parse_args()
+	return options, args
 
+    # Launch Window
+    def execute(self, options):
         if options.show_top:
-            self.top = Classification_Banner(
+            top = Classification_Banner(
                 options.message,
                 options.fgcolor,
                 options.bgcolor,
                 options.face,
                 options.size,
                 options.weight)
-            self.top.window.move(0, 0)
+            top.window.move(0, 0)
         if options.show_bottom:
-            self.bottom = Classification_Banner(
+            bottom = Classification_Banner(
                 options.message,
                 options.fgcolor,
                 options.bgcolor,
                 options.face,
                 options.size,
                 options.weight)
-            self.bottom.window.move(0, int(self.bottom.vres))
+            bottom.window.move(0, int(bottom.vres))
+
+    # Restart Classification Banner
+    def resize(self, widget, data=None):
+	self.config, self.args = self.configure()
+	self.execute(self.config)
+        return True
+
 
 # Main Program Loop
 if __name__ == "__main__":
-    run = Display_Banner()
-    gtk.main()
+	run = Display_Banner()
+	gtk.main()
