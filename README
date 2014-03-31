@@ -55,3 +55,25 @@ based upon generally accepted color guidelines in the DoD/IC.
         
         message='TOP SECRET//SCI'
         bgcolor='#FFFF00'
+
+
+Autostart
+=========
+
+To auto-start the classification-banner script on the GNOME Desktop, 
+create the following file:
+
+# vi /etc/xdg/autostart/classification-banner.desktop
+
+     [Desktop Entry]
+     Name=Classification Banner
+     Exec=/usr/local/bin/classification-banner.py
+     Comment=User Notification for Security Level of System.
+     Type=Application
+     Encoding=UTF-8
+     Version=1.0
+     MimeType=application/python;
+     Categories=Utility;
+     X-GNOME-Autostart-enabled=true
+     StartupNotify=false
+     Terminal=false
