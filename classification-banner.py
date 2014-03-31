@@ -83,12 +83,12 @@ class Classification_Banner:
         self.window.show_all()
         self.width, self.height = self.window.get_size()
 
-    # Maximize Screen
+    # Restore Minimized Window
     def restore(self, widget, data=None):
         self.window.present()
         return True
 
-    # Destroy Window on Resize (Display Banner Will Relaunch)
+    # Destroy Classification Banner Window on Resize (Display Banner Will Relaunch)
     def resize(self, widget, data=None):
         self.window.destroy()
         return True
@@ -146,7 +146,7 @@ class Display_Banner:
         options, args = parser.parse_args()
 	return options, args
 
-    # Launch Window
+    # Launch the Classification Banner Window(s)
     def execute(self, options):
         if options.show_top:
             top = Classification_Banner(
@@ -167,7 +167,7 @@ class Display_Banner:
                 options.weight)
             bottom.window.move(0, int(bottom.vres))
 
-    # Restart Classification Banner
+    # Relauch the Classification Banner on Screen Resize
     def resize(self, widget, data=None):
 	self.config, self.args = self.configure()
 	self.execute(self.config)
