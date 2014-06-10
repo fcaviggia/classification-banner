@@ -1,8 +1,8 @@
 #!/usr/bin/python
 # Classification Banner
-# Author: Frank Caviggia (fcaviggia@gmail.com)
+# Author: Frank Caviggia <fcaviggia at gmail.com>
 # Copyright: Frank Caviggia, 2013
-# Version: 1.4
+# Version: 1.5
 # License: GPLv2
 
 import sys
@@ -37,7 +37,11 @@ class Classification_Banner:
     	# Dynamic Resolution Scaling
     	self.monitor = gtk.gdk.Screen()
 	self.monitor.connect("size-changed", self.resize)
-	self.monitor.connect("monitors-changed", self.resize)
+	# Newer versions of pygtk have this method
+	try:
+		self.monitor.connect("monitors-changed", self.resize)
+	except:
+		pass
 
         # Create Main Window
         self.window = gtk.Window()
@@ -51,22 +55,26 @@ class Classification_Banner:
         self.window.set_decorated(False)
         self.window.set_keep_above(True)
         self.window.set_app_paintable(True)
-        # Try Xrandr to determine primary monitor resolution #1
+        # Try Xrandr to determine primary monitor resolution
     	try:
-	    	self.screen = os.popen("xrandr | grep primary | awk '{ print $4 }'").readlines()[0]
-	    	self.hres = self.screen.split('x')[0]
-	    	self.vres = self.screen.split('x')[1].split('+')[0]
-        # Try Xrandr to determine primary monitor resolution #2
-    	except:
-	    	self.screen = os.popen("xrandr | grep connected | awk '{ print $3 }'").readlines()[0]
-	    	self.hres = self.screen.split('x')[0]
-	    	self.vres = self.screen.split('x')[1].split('+')[0]
-        # Failback to GTK method
-	else:
-		self.display = gtk.gdk.display_get_default()
-		self.screen = self.display.get_default_screen()
-		self.hres = self.screen.get_width()
-		self.vres = self.screen.get_height()
+                self.screen = os.popen("xrandr | grep *0 | awk '{ print $2$3$4 }'").readlines()[0]
+                self.hres = self.screen.split('x')[0]
+                self.vres = self.screen.split('x')[1].split('+')[0]
+	except:
+		try:
+	    		self.screen = os.popen("xrandr | grep primary | awk '{ print $4 }'").readlines()[0]
+	    		self.hres = self.screen.split('x')[0]
+	    		self.vres = self.screen.split('x')[1].split('+')[0]
+		except:
+			self.screen = os.popen("xrandr | grep connected | awk '{ print $3 }'").readlines()[0]
+			self.hres = self.screen.split('x')[0]
+			self.vres = self.screen.split('x')[1].split('+')[0]
+        	else:
+			# Failback to GTK method
+			self.display = gtk.gdk.display_get_default()
+			self.screen = self.display.get_default_screen()
+			self.hres = self.screen.get_width()
+			self.vres = self.screen.get_height()
         self.window.set_default_size(int(self.hres), 5)
 
         # Create Main Vertical Box to Populate
@@ -101,7 +109,11 @@ class Display_Banner:
     	# Dynamic Resolution Scaling
     	self.monitor = gtk.gdk.Screen()
 	self.monitor.connect("size-changed", self.resize)
-	self.monitor.connect("monitors-changed", self.resize)
+	# Newer versions of pygtk have this method
+	try:
+		self.monitor.connect("monitors-changed", self.resize)
+	except:
+		pass
 
 	# Launch Banner
 	self.config, self.args = self.configure()
@@ -111,9 +123,9 @@ class Display_Banner:
     def configure(self):
         config = {}
         try:
-            execfile("/etc/classification-banner", config)
+        	execfile("/etc/classification-banner", config)
         except:
-            pass
+        	pass
         defaults = {}
         defaults["message"] = config.get("message", "UNCLASSIFIED")
         defaults["fgcolor"] = config.get("fgcolor", "#000000")
