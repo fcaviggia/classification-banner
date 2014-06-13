@@ -8,7 +8,9 @@ help government and possibly private customers display a
 notification that sensitive material is being displayed - for 
 example PII or SECRET Material being processed in a graphical
 session. The script has been tested on a variety of graphical
-environments such as GNOME2, GNOME3, KDE, twm, icewm, and Cinnamon. 
+environments such as GNOME2, GNOME3, KDE, twm, icewm, and Cinnamon.
+
+Python script verified working on RHEL 5/6/7 and Fedora 12-20.
 
 
 Classification Banner Usage
