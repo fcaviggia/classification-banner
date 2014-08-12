@@ -14,10 +14,10 @@ try:
     import pygtk
     import gtk
 except:
-    print("Error: DISPLAY environment varible not set.")
+    print("Error: DISPLAY environment variable not set.")
     sys.exit(1)
 
-# Classifion Banner Class
+# Classification Banner Class
 class Classification_Banner:
     """Class to create and refresh the actual banner."""
 
@@ -70,7 +70,7 @@ class Classification_Banner:
 			self.hres = self.screen.split('x')[0]
 			self.vres = self.screen.split('x')[1].split('+')[0]
         	else:
-			# Failback to GTK method
+			# Fail back to GTK method
 			self.display = gtk.gdk.display_get_default()
 			self.screen = self.display.get_default_screen()
 			self.hres = self.screen.get_width()
@@ -179,7 +179,7 @@ class Display_Banner:
                 options.weight)
             bottom.window.move(0, int(bottom.vres))
 
-    # Relauch the Classification Banner on Screen Resize
+    # Relaunch the Classification Banner on Screen Resize
     def resize(self, widget, data=None):
 	self.config, self.args = self.configure()
 	self.execute(self.config)

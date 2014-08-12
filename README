@@ -23,8 +23,8 @@ Options should be placed in the '/etc/classification-banner' file.
  bgcolor      - Background color of the banner the text is against (Default: '#000000' "Black")
  face         - Font face to use for the displayed text (Default: 'liberation-sans')
  size         - Size of font to use for text (Default: 'small')
- weight       - Bold or normal (Defualt: 'bold')
- show_top     - Show top banner (Defualt: True)
+ weight       - Bold or normal (Default: 'bold')
+ show_top     - Show top banner (Default: True)
  show_bottom  - Show bottom banner (Default: True)
 
 Examples
