@@ -1,8 +1,16 @@
 #!/usr/bin/python
 # Classification Banner
-# Author: Frank Caviggia <fcaviggia at gmail.com>
-# Copyright: Frank Caviggia, 2014
-# Version: 1.5.1
+#
+# This script was written by Frank Caviggia, Red Hat Consulting
+# Last update was 14 October 2014
+# This script is NOT SUPPORTED by Red Hat Global Support Services.
+# Please contact Rick Tavares for more information.
+#
+# Script: classification-banner.py
+# Description: Displays a Classification for an Xwindows session
+# Copyright: Red Hat Consulting, 2014
+# Author: Frank Caviggia <fcaviggi (at) redhat.com>
+# Version: 1.5.2
 # License: GPLv2
 
 import sys
