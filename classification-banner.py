@@ -58,7 +58,7 @@ class Classification_Banner:
         self.window.set_app_paintable(True)
         # Try Xrandr to determine primary monitor resolution
         try:
-            self.screen = os.popen("xrandr | grep *0 | awk '{ print $2$3$4 }'").readlines()[0]
+            self.screen = os.popen("xrandr | grep '^\*0' | awk '{ print $2$3$4 }'").readlines()[0]
             self.hres = self.screen.split('x')[0]
             self.vres = self.screen.split('x')[1].split('+')[0]
         except:
