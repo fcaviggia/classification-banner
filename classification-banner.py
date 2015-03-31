@@ -2,7 +2,7 @@
 # Classification Banner
 #
 # This script was written by Frank Caviggia, Red Hat Consulting
-# Last update was 14 October 2014
+# Last update was 30 March 2015
 # This script is NOT SUPPORTED by Red Hat Global Support Services.
 # Please contact Rick Tavares for more information.
 #
@@ -10,7 +10,7 @@
 # Description: Displays a Classification for an Xwindows session
 # Copyright: Red Hat Consulting, 2014
 # Author: Frank Caviggia <fcaviggi (at) redhat.com>
-# Version: 1.5.2
+# Version: 1.5.3
 # License: GPLv2
 
 import sys
@@ -66,16 +66,16 @@ class Classification_Banner:
         self.window.set_app_paintable(True)
         # Try Xrandr to determine primary monitor resolution
         try:
-            self.screen = os.popen("xrandr | grep '^\*0' | awk '{ print $2$3$4 }'").readlines()[0]
+	    self.screen = os.popen("xrandr | grep primary | awk '{ print $4 }'").readlines()[0]
             self.hres = self.screen.split('x')[0]
             self.vres = self.screen.split('x')[1].split('+')[0]
         except:
             try:
-                self.screen = os.popen("xrandr | grep primary | awk '{ print $4 }'").readlines()[0]
+                self.screen = os.popen("xrandr | grep connected | awk '{ print $3 }'").readlines()[0]
                 self.hres = self.screen.split('x')[0]
                 self.vres = self.screen.split('x')[1].split('+')[0]
             except:
-                self.screen = os.popen("xrandr | grep connected | awk '{ print $3 }'").readlines()[0]
+                self.screen = os.popen("xrandr | grep '^\*0' | awk '{ print $2$3$4 }'").readlines()[0]
                 self.hres = self.screen.split('x')[0]
                 self.vres = self.screen.split('x')[1].split('+')[0]
             else:
