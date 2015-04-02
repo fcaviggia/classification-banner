@@ -26,6 +26,8 @@ Options should be placed in the '/etc/classification-banner' file.
  weight       - Bold or normal (Default: 'bold')
  show_top     - Show top banner (Default: True)
  show_bottom  - Show bottom banner (Default: True)
+ x            - Manually Set Horiztonal Resolution (OPTIONAL) [ if x is set, y required ]
+ y            - Manually Set Horiztonal Resolution (OPTIONAL) [ if y is set, x required ]
 
 Examples
 ========
