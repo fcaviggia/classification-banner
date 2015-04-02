@@ -2,7 +2,7 @@
 # Classification Banner
 #
 # This script was written by Frank Caviggia, Red Hat Consulting
-# Last update was 30 March 2015
+# Last update was 2 April 2015
 # This script is NOT SUPPORTED by Red Hat Global Support Services.
 # Please contact Rick Tavares for more information.
 #
@@ -10,7 +10,7 @@
 # Description: Displays a Classification for an Xwindows session
 # Copyright: Red Hat Consulting, 2014
 # Author: Frank Caviggia <fcaviggi (at) redhat.com>
-# Version: 1.5.3
+# Version: 1.5.4
 # License: GPLv2
 
 import sys
@@ -32,7 +32,7 @@ class Classification_Banner:
 
     def __init__(self, message="UNCLASSIFIED", fgcolor="#000000",
                  bgcolor="#00CC00", face="liberation-sans", size="small",
-                 weight="bold"):
+                 weight="bold",x=0,y=0):
         """Set up and display the main window
 
         Keyword arguments:
@@ -42,6 +42,8 @@ class Classification_Banner:
         face    -- Font face to use for the displayed text
         size    -- Size of font to use for text
         weight  -- Bold or normal
+        x       -- Horizontal Screen Resolution (int) [ requires y ]
+        y       -- Vertical Screen Resolution (int) [ requires x ]	
         """
         # Dynamic Resolution Scaling
         self.monitor = gtk.gdk.Screen()
@@ -64,26 +66,31 @@ class Classification_Banner:
         self.window.set_decorated(False)
         self.window.set_keep_above(True)
         self.window.set_app_paintable(True)
-        # Try Xrandr to determine primary monitor resolution
-        try:
-	    self.screen = os.popen("xrandr | grep primary | awk '{ print $4 }'").readlines()[0]
-            self.hres = self.screen.split('x')[0]
-            self.vres = self.screen.split('x')[1].split('+')[0]
-        except:
-            try:
-                self.screen = os.popen("xrandr | grep connected | awk '{ print $3 }'").readlines()[0]
-                self.hres = self.screen.split('x')[0]
-                self.vres = self.screen.split('x')[1].split('+')[0]
-            except:
-                self.screen = os.popen("xrandr | grep '^\*0' | awk '{ print $2$3$4 }'").readlines()[0]
-                self.hres = self.screen.split('x')[0]
-                self.vres = self.screen.split('x')[1].split('+')[0]
-            else:
-                # Fail back to GTK method
-                self.display = gtk.gdk.display_get_default()
-                self.screen = self.display.get_default_screen()
-                self.hres = self.screen.get_width()
-                self.vres = self.screen.get_height()
+        if x == 0 or y == 0:
+        	# Try Xrandr to determine primary monitor resolution
+		try:
+			self.screen = os.popen("xrandr | grep primary | awk '{ print $4 }'").readlines()[0]
+			self.hres = self.screen.split('x')[0]
+			self.vres = self.screen.split('x')[1].split('+')[0]
+		except:
+			try:
+				self.screen = os.popen("xrandr | grep connected | awk '{ print $3 }'").readlines()[0]
+				self.hres = self.screen.split('x')[0]
+				self.vres = self.screen.split('x')[1].split('+')[0]
+			except:
+				self.screen = os.popen("xrandr | grep '^\*0' | awk '{ print $2$3$4 }'").readlines()[0]
+				self.hres = self.screen.split('x')[0]
+				self.vres = self.screen.split('x')[1].split('+')[0]
+			else:
+				# Fail back to GTK method
+				self.display = gtk.gdk.display_get_default()
+				self.screen = self.display.get_default_screen()
+				self.hres = self.screen.get_width()
+				self.vres = self.screen.get_height()
+	else:
+		# Resoultion Defined
+		self.hres = x
+		self.vres = y
         self.window.set_default_size(int(self.hres), 5)
 
         # Create Main Vertical Box to Populate
@@ -113,7 +120,6 @@ class Classification_Banner:
 
 class Display_Banner:
     """Display Classification Banner Message"""
-
     def __init__(self):
 
         # Dynamic Resolution Scaling
@@ -145,7 +151,9 @@ class Display_Banner:
         defaults["weight"] = config.get("weight", "bold")
         defaults["show_top"] = config.get("show_top", True)
         defaults["show_bottom"] = config.get("show_bottom", True)
-
+        defaults["x"] = config.get("x", 0)
+        defaults["y"] = config.get("y", 0)
+     
         # Use the global config to set defaults for command line options
         parser = optparse.OptionParser()
         parser.add_option("-m", "--message", default=defaults["message"],
@@ -164,6 +172,10 @@ class Display_Banner:
         parser.add_option("--hide-bottom", default=defaults["show_bottom"],
                           dest="show_bottom", action="store_false",
                           help="Disable the bottom banner")
+        parser.add_option("-x", "--hres", default=defaults["x"],
+                          help="Horizontal Screen Resolution")
+        parser.add_option("-y", "--vres", default=defaults["y"], 
+                          help="Vertical Screen Resolution")
 
         options, args = parser.parse_args()
         return options, args
@@ -177,7 +189,9 @@ class Display_Banner:
                 options.bgcolor,
                 options.face,
                 options.size,
-                options.weight)
+                options.weight,
+                options.x,
+                options.y)
             top.window.move(0, 0)
         if options.show_bottom:
             bottom = Classification_Banner(
@@ -186,7 +200,9 @@ class Display_Banner:
                 options.bgcolor,
                 options.face,
                 options.size,
-                options.weight)
+                options.weight,
+                options.x,
+                options.y)
             bottom.window.move(0, int(bottom.vres))
 
     # Relaunch the Classification Banner on Screen Resize
