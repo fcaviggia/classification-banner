@@ -110,7 +110,7 @@ class Classification_Banner:
         self.hbox.pack_start(self.label, True, True, 0)
 
 	self.label = gtk.Label(
-            "<span font_family='liberation-sans' weight='normal' foreground='%s' size='small'>  (ESC to hide)  </span>" %
+            "<span font_family='liberation-sans' weight='normal' foreground='%s' size='x-small'>  (ESC to hide)  </span>" %
             (fgcolor))
         self.label.set_use_markup(True)
         self.label.set_justify(gtk.JUSTIFY_RIGHT)
