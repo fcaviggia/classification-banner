@@ -10,7 +10,7 @@
 # Description: Displays a Classification for an Xwindows session
 # Copyright: Red Hat Consulting, 2014
 # Author: Frank Caviggia <fcaviggi (at) redhat.com>
-# Version: 1.6
+# Version: 1.6.1
 # License: GPLv2
 
 import sys
@@ -60,6 +60,7 @@ class Classification_Banner:
         self.window = gtk.Window()
         self.window.set_position(gtk.WIN_POS_CENTER)
         self.window.connect("hide", self.restore)
+        self.window.connect("key-press-event", self.keypress)
         self.window.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse(bgcolor))
         self.window.set_property('skip-taskbar-hint', True)
         self.window.set_property('skip-pager-hint', True)
@@ -99,27 +100,51 @@ class Classification_Banner:
 
         # Create Main Vertical Box to Populate
         self.vbox = gtk.VBox()
+	self.hbox = gtk.HBox()
 
         self.label = gtk.Label(
             "<span font_family='%s' weight='%s' foreground='%s' size='%s'>%s</span>" %
             (face, weight, fgcolor, size, message))
         self.label.set_use_markup(True)
         self.label.set_justify(gtk.JUSTIFY_CENTER)
-        self.vbox.pack_start(self.label, True, True, 0)
+        self.hbox.pack_start(self.label, True, True, 0)
+
+	self.label = gtk.Label(
+            "<span font_family='liberation-sans' weight='normal' foreground='%s' size='small'>  (ESC to hide)  </span>" %
+            (fgcolor))
+        self.label.set_use_markup(True)
+        self.label.set_justify(gtk.JUSTIFY_RIGHT)
+        self.hbox.pack_start(self.label, False, False, 0)
+
+        self.vbox.pack_start(self.hbox, True, True, 0)
 
         self.window.add(self.vbox)
         self.window.show_all()
         self.width, self.height = self.window.get_size()
 
     # Restore Minimized Window
-    def restore(self, widget, event=None):
-        self.window.present()
+    def restore(self, widget, data=None):
+	self.window.deiconify()
+	self.window.present()
         return True
 
     # Destroy Classification Banner Window on Resize (Display Banner Will Relaunch)
     def resize(self, widget, data=None):
         self.window.destroy()
         return True
+
+    # Press ESC to hide window for 15 seconds
+    def keypress(self, widget, event=None):
+	if event.keyval == 65307:
+		if gtk.events_pending() == False:
+			self.window.iconify()
+			self.window.hide()
+			time.sleep(15)
+			self.window.show()
+			self.window.deiconify()
+			self.window.present()
+	return True
+
 
 class Display_Banner:
     """Display Classification Banner Message"""

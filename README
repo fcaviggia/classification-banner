@@ -12,6 +12,10 @@ environments such as GNOME2, GNOME3, KDE, twm, icewm, and Cinnamon.
 
 Python script verified working on RHEL 5/6/7 and Fedora 12-20.
 
+Selecting the classification window and pressing the ESC key
+will temporarily hide the window for 15 seconds, it will return
+to view after that
+
 
 Classification Banner Usage
 ===========================
