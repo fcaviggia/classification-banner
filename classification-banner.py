@@ -2,7 +2,7 @@
 # Classification Banner
 #
 # This script was written by Frank Caviggia, Red Hat Consulting
-# Last update was 3 April 2015
+# Last update was 14 April 2015
 # This script is NOT SUPPORTED by Red Hat Global Support Services.
 # Please contact Rick Tavares for more information.
 #
@@ -10,12 +10,13 @@
 # Description: Displays a Classification for an Xwindows session
 # Copyright: Red Hat Consulting, 2014
 # Author: Frank Caviggia <fcaviggi (at) redhat.com>
-# Version: 1.5.4
+# Version: 1.6
 # License: GPLv2
 
 import sys
 import os
 import optparse
+import time
 
 try:
     os.environ['DISPLAY']
@@ -32,7 +33,7 @@ class Classification_Banner:
 
     def __init__(self, message="UNCLASSIFIED", fgcolor="#000000",
                  bgcolor="#00CC00", face="liberation-sans", size="small",
-                 weight="bold",x=0,y=0):
+                 weight="bold",x=0,y=0,opacity=0.75):
         """Set up and display the main window
 
         Keyword arguments:
@@ -43,7 +44,8 @@ class Classification_Banner:
         size    -- Size of font to use for text
         weight  -- Bold or normal
         hres    -- Horizontal Screen Resolution (int) [ requires vres ]
-        vres    -- Vertical Screen Resolution (int) [ requires hres ]	
+        vres    -- Vertical Screen Resolution (int) [ requires hres ]
+	opacity -- Opacity of window (float) [0 .. 1, default 0.75]
         """
         # Dynamic Resolution Scaling
         self.monitor = gtk.gdk.Screen()
@@ -66,6 +68,8 @@ class Classification_Banner:
         self.window.set_decorated(False)
         self.window.set_keep_above(True)
         self.window.set_app_paintable(True)
+	if self.window.is_composited() == True:
+		self.window.set_opacity(opacity)
         if x == 0 or y == 0:
         	# Try Xrandr to determine primary monitor resolution
 		try:
@@ -108,7 +112,7 @@ class Classification_Banner:
         self.width, self.height = self.window.get_size()
 
     # Restore Minimized Window
-    def restore(self, widget, data=None):
+    def restore(self, widget, event=None):
         self.window.present()
         return True
 
@@ -116,7 +120,6 @@ class Classification_Banner:
     def resize(self, widget, data=None):
         self.window.destroy()
         return True
-
 
 class Display_Banner:
     """Display Classification Banner Message"""
@@ -153,6 +156,7 @@ class Display_Banner:
         defaults["show_bottom"] = config.get("show_bottom", True)
         defaults["hres"] = config.get("hres", 0)
         defaults["vres"] = config.get("vres", 0)
+	defaults["opacity"] = config.get("opacity", 0.75)
      
         # Use the global config to set defaults for command line options
         parser = optparse.OptionParser()
@@ -176,6 +180,8 @@ class Display_Banner:
                           help="Horizontal Screen Resolution")
         parser.add_option("-y", "--vres", default=defaults["vres"], 
                           help="Vertical Screen Resolution")
+	parser.add_option("-o", "--opacity", default=defaults["opacity"], 
+                          help="Window opacity for composted window managers")
 
         options, args = parser.parse_args()
         return options, args
@@ -190,8 +196,9 @@ class Display_Banner:
                 options.face,
                 options.size,
                 options.weight,
-                options.hres,
-                options.vres)
+                int(options.hres),
+                int(options.vres),
+		float(options.opacity))
             top.window.move(0, 0)
         if options.show_bottom:
             bottom = Classification_Banner(
@@ -201,8 +208,9 @@ class Display_Banner:
                 options.face,
                 options.size,
                 options.weight,
-                options.hres,
-                options.vres)
+                int(options.hres),
+                int(options.vres),
+		float(options.opacity))
             bottom.window.move(0, int(bottom.vres))
 
     # Relaunch the Classification Banner on Screen Resize

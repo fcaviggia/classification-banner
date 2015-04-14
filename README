@@ -28,6 +28,7 @@ Options should be placed in the '/etc/classification-banner' file.
  show_bottom  - Show bottom banner (Default: True)
  hres         - Manually Set Horiztonal Resolution (OPTIONAL) [ if hres is set, vres required ]
  vres         - Manually Set Horiztonal Resolution (OPTIONAL) [ if vres is set, hres required ]
+ opacity      - Sets opacity - for composted window managers only (OPTIONAL) [float - range 0 .. 1] (Default 0.75)
  
 Command line options that correspond to the above settings:
 
@@ -41,6 +42,7 @@ Command line options that correspond to the above settings:
  --hide-bottom
  -x, --hres
  -y, --vres
+ -o, --opacity
 
 Examples
 ========
