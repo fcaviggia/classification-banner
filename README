@@ -10,7 +10,7 @@ example PII or SECRET Material being processed in a graphical
 session. The script has been tested on a variety of graphical
 environments such as GNOME2, GNOME3, KDE, twm, icewm, and Cinnamon.
 
-Python script verified working on RHEL 5/6/7 and Fedora 12-20.
+Python script verified working on RHEL 5/6/7 and Fedora 12-22.
 
 Selecting the classification window and pressing the ESC key
 will temporarily hide the window for 15 seconds, it will return
