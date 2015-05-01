@@ -27,6 +27,8 @@ except:
     print("Error: DISPLAY environment variable not set.")
     sys.exit(1)
 
+CONF_FILE = "/etc/classification-banner"
+
 
 def get_user():
     user = os.getlogin()
@@ -248,7 +250,7 @@ class Display_Banner:
     def configure(self):
         config = {}
         try:
-            execfile("/etc/classification-banner", config)
+            execfile(CONF_FILE, config)
         except:
             pass
 
