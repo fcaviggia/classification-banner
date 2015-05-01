@@ -17,6 +17,7 @@ import sys
 import os
 import optparse
 import time
+from socket import gethostname
 
 try:
     os.environ['DISPLAY']
@@ -27,13 +28,27 @@ except:
     sys.exit(1)
 
 
+def get_user():
+    user = os.getlogin()
+
+    return user
+
+
+def get_host():
+    host = gethostname()
+    host = host.split('.')[1]
+
+    return host
+
+
 # Classification Banner Class
 class Classification_Banner:
     """Class to create and refresh the actual banner."""
 
     def __init__(self, message="UNCLASSIFIED", fgcolor="#000000",
                  bgcolor="#00CC00", face="liberation-sans", size="small",
-                 weight="bold",x=0,y=0,opacity=0.75):
+                 weight="bold", x=0, y=0, esc=True, opacity=0.75, sys_info=False):
+
         """Set up and display the main window
 
         Keyword arguments:
@@ -45,11 +60,12 @@ class Classification_Banner:
         weight  -- Bold or normal
         hres    -- Horizontal Screen Resolution (int) [ requires vres ]
         vres    -- Vertical Screen Resolution (int) [ requires hres ]
-	opacity -- Opacity of window (float) [0 .. 1, default 0.75]
+        opacity -- Opacity of window (float) [0 .. 1, default 0.75]
         """
         # Dynamic Resolution Scaling
         self.monitor = gtk.gdk.Screen()
         self.monitor.connect("size-changed", self.resize)
+
         # Newer versions of pygtk have this method
         try:
             self.monitor.connect("monitors-changed", self.resize)
@@ -69,90 +85,155 @@ class Classification_Banner:
         self.window.set_decorated(False)
         self.window.set_keep_above(True)
         self.window.set_app_paintable(True)
-	if self.window.is_composited() == True:
-		self.window.set_opacity(opacity)
+
+        try:
+            self.window.set_opacity(opacity)
+        except:
+            pass
+
         if x == 0 or y == 0:
-        	# Try Xrandr to determine primary monitor resolution
-		try:
-			self.screen = os.popen("xrandr | grep ' primary ' | awk '{ print $4 }'").readlines()[0]
-			self.hres = self.screen.split('x')[0]
-			self.vres = self.screen.split('x')[1].split('+')[0]
-		except:
-			try:
-				self.screen = os.popen("xrandr | grep ' connected ' | awk '{ print $3 }'").readlines()[0]
-				self.hres = self.screen.split('x')[0]
-				self.vres = self.screen.split('x')[1].split('+')[0]
-			except:
-				self.screen = os.popen("xrandr | grep '^\*0' | awk '{ print $2$3$4 }'").readlines()[0]
-				self.hres = self.screen.split('x')[0]
-				self.vres = self.screen.split('x')[1].split('+')[0]
-			else:
-				# Fail back to GTK method
-				self.display = gtk.gdk.display_get_default()
-				self.screen = self.display.get_default_screen()
-				self.hres = self.screen.get_width()
-				self.vres = self.screen.get_height()
-	else:
-		# Resoultion Set Staticly
-		self.hres = x
-		self.vres = y
+            # Try Xrandr to determine primary monitor resolution
+            try:
+                self.screen = os.popen("xrandr | grep ' primary ' | awk '{ print $4 }'").readlines()[0]
+                self.hres = self.screen.split('x')[0]
+                self.vres = self.screen.split('x')[1].split('+')[0]
+
+            except:
+                try:
+                    self.screen = os.popen("xrandr | grep ' connected ' | awk '{ print $3 }'").readlines()[0]
+                    self.hres = self.screen.split('x')[0]
+                    self.vres = self.screen.split('x')[1].split('+')[0]
+
+                except:
+                    self.screen = os.popen("xrandr | grep '^\*0' | awk '{ print $2$3$4 }'").readlines()[0]
+                    self.hres = self.screen.split('x')[0]
+                    self.vres = self.screen.split('x')[1].split('+')[0]
+
+                else:
+                    # Fail back to GTK method
+                    self.display = gtk.gdk.display_get_default()
+                    self.screen = self.display.get_default_screen()
+                    self.hres = self.screen.get_width()
+                    self.vres = self.screen.get_height()
+        else:
+            # Resoultion Set Staticly
+            self.hres = x
+            self.vres = y
+
+        # Set the default window size
         self.window.set_default_size(int(self.hres), 5)
 
-        # Create Main Vertical Box to Populate
-        self.vbox = gtk.VBox()
-	self.hbox = gtk.HBox()
+        # Create Main Horizontal Box to Populate
+        self.hbox = gtk.HBox()
 
-        self.label = gtk.Label(
+        # Create the Center Vertical Box
+        self.vbox_center = gtk.VBox()
+        self.center_label = gtk.Label(
             "<span font_family='%s' weight='%s' foreground='%s' size='%s'>%s</span>" %
             (face, weight, fgcolor, size, message))
-        self.label.set_use_markup(True)
-        self.label.set_justify(gtk.JUSTIFY_CENTER)
-        self.hbox.pack_start(self.label, True, True, 0)
+        self.center_label.set_use_markup(True)
+        self.center_label.set_justify(gtk.JUSTIFY_CENTER)
+        self.vbox_center.pack_start(self.center_label, True, True, 0)
 
-	self.label = gtk.Label(
+        # Create the Right-Justified Vertical Box to Populate for hostname
+        self.vbox_right = gtk.VBox()
+        self.host_label = gtk.Label(
+            "<span font_family='%s' weight='%s' foreground='%s' size='%s'>%s</span>" %
+            (face, weight, fgcolor, size, get_host()))
+        self.host_label.set_use_markup(True)
+        self.host_label.set_justify(gtk.JUSTIFY_RIGHT)
+        self.host_label.set_width_chars(20)
+
+        # Create the Left-Justified Vertical Box to Populate for user
+        self.vbox_left = gtk.VBox()
+        self.user_label = gtk.Label(
+            "<span font_family='%s' weight='%s' foreground='%s' size='%s'>%s</span>" %
+            (face, weight, fgcolor, size, get_user()))
+        self.user_label.set_use_markup(True)
+        self.user_label.set_justify(gtk.JUSTIFY_LEFT)
+        self.user_label.set_width_chars(20)
+        
+        # Create the Right-Justified Vertical Box to Populate for ESC message
+        self.vbox_esc_right = gtk.VBox()
+        self.esc_label = gtk.Label(
             "<span font_family='liberation-sans' weight='normal' foreground='%s' size='x-small'>  (ESC to hide)  </span>" %
             (fgcolor))
-        self.label.set_use_markup(True)
-        self.label.set_justify(gtk.JUSTIFY_RIGHT)
-        self.hbox.pack_start(self.label, False, False, 0)
+        self.esc_label.set_use_markup(True)
+        self.esc_label.set_justify(gtk.JUSTIFY_RIGHT)
+        self.esc_label.set_width_chars(20)
 
-        self.vbox.pack_start(self.hbox, True, True, 0)
+        # Empty Label for formatting purposes
+        self.vbox_empty = gtk.VBox()
+        self.empty_label = gtk.Label(
+            "<span font_family='liberation-sans' weight='normal'>                 </span>")
+        self.empty_label.set_use_markup(True)
+        self.empty_label.set_width_chars(20)
 
-        self.window.add(self.vbox)
+        if not esc:
+            if not sys_info:
+                self.hbox.pack_start(self.vbox_center, True, True, 0)
+            else:
+                self.vbox_right.pack_start(self.host_label, True, True, 0)
+                self.vbox_left.pack_start(self.user_label, True, True, 0)
+                self.hbox.pack_start(self.vbox_right, False, True, 20)
+                self.hbox.pack_start(self.vbox_center, True, True, 0)
+                self.hbox.pack_start(self.vbox_left, False, True, 20)
+
+        else:
+            if esc and not sys_info:
+                self.empty_label.set_justify(gtk.JUSTIFY_LEFT)
+                self.vbox_empty.pack_start(self.empty_label, True, True, 0)
+                self.vbox_esc_right.pack_start(self.esc_label, True, True, 0)
+                self.hbox.pack_start(self.vbox_esc_right, False, True, 0)
+                self.hbox.pack_start(self.vbox_center, True, True, 0)
+                self.hbox.pack_start(self.vbox_empty, False, True, 0)
+
+        if sys_info:
+                self.vbox_right.pack_start(self.host_label, True, True, 0)
+                self.vbox_left.pack_start(self.user_label, True, True, 0)
+                self.hbox.pack_start(self.vbox_right, False, True, 20)
+                self.hbox.pack_start(self.vbox_center, True, True, 0)
+                self.hbox.pack_start(self.vbox_left, False, True, 20)
+
+        self.window.add(self.hbox)
         self.window.show_all()
         self.width, self.height = self.window.get_size()
 
     # Restore Minimized Window
     def restore(self, widget, data=None):
-	self.window.deiconify()
-	self.window.present()
+        self.window.deiconify()
+        self.window.present()
+
         return True
 
     # Destroy Classification Banner Window on Resize (Display Banner Will Relaunch)
     def resize(self, widget, data=None):
         self.window.destroy()
+
         return True
 
     # Press ESC to hide window for 15 seconds
     def keypress(self, widget, event=None):
-	if event.keyval == 65307:
-		if gtk.events_pending() == False:
-			self.window.iconify()
-			self.window.hide()
-			time.sleep(15)
-			self.window.show()
-			self.window.deiconify()
-			self.window.present()
-	return True
+        if event.keyval == 65307:
+            if not gtk.events_pending():
+                self.window.iconify()
+                self.window.hide()
+                time.sleep(15)
+                self.window.show()
+                self.window.deiconify()
+                self.window.present()
+
+        return True
 
 
 class Display_Banner:
+
     """Display Classification Banner Message"""
     def __init__(self):
-
         # Dynamic Resolution Scaling
         self.monitor = gtk.gdk.Screen()
         self.monitor.connect("size-changed", self.resize)
+
         # Newer versions of pygtk have this method
         try:
             self.monitor.connect("monitors-changed", self.resize)
@@ -170,6 +251,7 @@ class Display_Banner:
             execfile("/etc/classification-banner", config)
         except:
             pass
+
         defaults = {}
         defaults["message"] = config.get("message", "UNCLASSIFIED")
         defaults["fgcolor"] = config.get("fgcolor", "#000000")
@@ -181,32 +263,41 @@ class Display_Banner:
         defaults["show_bottom"] = config.get("show_bottom", True)
         defaults["hres"] = config.get("hres", 0)
         defaults["vres"] = config.get("vres", 0)
-	defaults["opacity"] = config.get("opacity", 0.75)
-     
+        defaults["sys_info"] = config.get("sys_info", False)
+        defaults["opacity"] = config.get("opacity", 0.75)
+        defaults["esc"] = config.get("esc", True)
+
         # Use the global config to set defaults for command line options
         parser = optparse.OptionParser()
         parser.add_option("-m", "--message", default=defaults["message"],
-                          help="Classification message")
+                          help="Set the Classification message")
         parser.add_option("-f", "--fgcolor", default=defaults["fgcolor"],
-                          help="Foreground (text) color")
+                          help="Set the Foreground (text) color")
         parser.add_option("-b", "--bgcolor", default=defaults["bgcolor"],
-                          help="Background color")
+                          help="Set the Background color")
+        parser.add_option("-x", "--hres", default=defaults["hres"], type="int",
+                          help="Set the Horizontal Screen Resolution")
+        parser.add_option("-y", "--vres", default=defaults["vres"], type="int",
+                          help="Set the Vertical Screen Resolution")
+        parser.add_option("-o", "--opacity", default=defaults["opacity"],
+                          type="float", dest="opacity",
+                          help="Set the window opacity for composted window managers")
         parser.add_option("--face", default=defaults["face"], help="Font face")
         parser.add_option("--size", default=defaults["size"], help="Font size")
         parser.add_option("--weight", default=defaults["weight"],
-                          help="Font weight")
+                          help="Set the Font weight")
+        parser.add_option("--disable-esc-msg", default=defaults["esc"],
+                          dest="esc", action="store_false",
+                          help="Disable the 'ESC to hide' message")
         parser.add_option("--hide-top", default=defaults["show_top"],
                           dest="show_top", action="store_false",
                           help="Disable the top banner")
         parser.add_option("--hide-bottom", default=defaults["show_bottom"],
                           dest="show_bottom", action="store_false",
                           help="Disable the bottom banner")
-        parser.add_option("-x", "--hres", default=defaults["hres"],
-                          help="Horizontal Screen Resolution")
-        parser.add_option("-y", "--vres", default=defaults["vres"], 
-                          help="Vertical Screen Resolution")
-	parser.add_option("-o", "--opacity", default=defaults["opacity"], 
-                          help="Window opacity for composted window managers")
+        parser.add_option("--system-info", default=defaults["sys_info"],
+                          dest="sys_info", action="store_true",
+                          help="Show user and hostname in the top banner")
 
         options, args = parser.parse_args()
         return options, args
@@ -221,10 +312,13 @@ class Display_Banner:
                 options.face,
                 options.size,
                 options.weight,
-                int(options.hres),
-                int(options.vres),
-		float(options.opacity))
+                options.hres,
+                options.vres,
+                options.esc,
+                options.opacity,
+                options.sys_info)
             top.window.move(0, 0)
+
         if options.show_bottom:
             bottom = Classification_Banner(
                 options.message,
@@ -233,15 +327,17 @@ class Display_Banner:
                 options.face,
                 options.size,
                 options.weight,
-                int(options.hres),
-                int(options.vres),
-		float(options.opacity))
+                options.hres,
+                options.vres,
+                options.esc,
+                options.opacity)
             bottom.window.move(0, int(bottom.vres))
 
     # Relaunch the Classification Banner on Screen Resize
     def resize(self, widget, data=None):
         self.config, self.args = self.configure()
         self.execute(self.config)
+
         return True
 
 
