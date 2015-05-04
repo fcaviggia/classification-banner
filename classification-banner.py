@@ -2,7 +2,7 @@
 # Classification Banner
 #
 # This script was written by Frank Caviggia, Red Hat Consulting
-# Last update was 29 April 2015
+# Last update was 04 May 2015
 # This script is NOT SUPPORTED by Red Hat Global Support Services.
 # Please contact Rick Tavares for more information.
 #
@@ -10,38 +10,33 @@
 # Description: Displays a Classification for an Xwindows session
 # Copyright: Red Hat Consulting, 2014
 # Author: Frank Caviggia <fcaviggi (at) redhat.com>
-# Version: 1.6.2
+# Version: 1.6.3
 # License: GPLv2
 
-import sys
-import os
-import optparse
-import time
+import sys,os,optparse,time
 from socket import gethostname
 
+# Check if DISPLAY variable is set
 try:
     os.environ['DISPLAY']
-    import pygtk
-    import gtk
+    import pygtk,gtk
 except:
     print("Error: DISPLAY environment variable not set.")
     sys.exit(1)
 
+# Global Configuration File
 CONF_FILE = "/etc/classification-banner"
 
-
+# Returns Username
 def get_user():
     user = os.getlogin()
-
     return user
 
-
+# Returns Hostname
 def get_host():
     host = gethostname()
     host = host.split('.')[1]
-
     return host
-
 
 # Classification Banner Class
 class Classification_Banner:
@@ -332,14 +327,14 @@ class Display_Banner:
                 options.hres,
                 options.vres,
                 options.esc,
-                options.opacity)
+                options.opacity,
+                options.sys_info)
             bottom.window.move(0, int(bottom.vres))
 
     # Relaunch the Classification Banner on Screen Resize
     def resize(self, widget, data=None):
         self.config, self.args = self.configure()
         self.execute(self.config)
-
         return True
 
 
