@@ -153,7 +153,7 @@ class Classification_Banner:
         # Create the Right-Justified Vertical Box to Populate for ESC message
         self.vbox_esc_right = gtk.VBox()
         self.esc_label = gtk.Label(
-            "<span font_family='liberation-sans' weight='normal' foreground='%s' size='x-small'>  (ESC to hide)  </span>" %
+            "<span font_family='liberation-sans' weight='normal' foreground='%s' size='xx-small'>  (ESC to hide temporarily)  </span>" %
             (fgcolor))
         self.esc_label.set_use_markup(True)
         self.esc_label.set_justify(gtk.JUSTIFY_RIGHT)
