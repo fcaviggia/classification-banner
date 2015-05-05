@@ -35,7 +35,7 @@ def get_user():
 # Returns Hostname
 def get_host():
     host = gethostname()
-    host = host.split('.')[1]
+    host = host.split('.')[0]
     return host
 
 # Classification Banner Class
