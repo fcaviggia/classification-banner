@@ -35,7 +35,7 @@ def get_user():
 # Returns Hostname
 def get_host():
     host = gethostname()
-    host = host.split('.')[1]
+    host = host.split('.')[0]
     return host
 
 # Classification Banner Class
@@ -327,8 +327,7 @@ class Display_Banner:
                 options.hres,
                 options.vres,
                 options.esc,
-                options.opacity,
-                options.sys_info)
+                options.opacity)
             bottom.window.move(0, int(bottom.vres))
 
     # Relaunch the Classification Banner on Screen Resize
