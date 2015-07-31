@@ -13,7 +13,7 @@
 # Version: 1.6.3
 # License: GPLv2
 
-import sys,os,optparse,time
+import sys,os,optparse,time,getpass
 from socket import gethostname
 
 # Check if DISPLAY variable is set
@@ -29,7 +29,7 @@ CONF_FILE = "/etc/classification-banner"
 
 # Returns Username
 def get_user():
-    user = os.getlogin()
+    user = getpass.getuser()
     return user
 
 # Returns Hostname
