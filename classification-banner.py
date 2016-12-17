@@ -1,16 +1,13 @@
 #!/usr/bin/python
 # Classification Banner
 #
-# This script was written by Frank Caviggia, Red Hat Consulting
-# Last update was 04 May 2015
-# This script is NOT SUPPORTED by Red Hat Global Support Services.
-# Please contact Rick Tavares for more information.
+# Last update was 17 December 2016
 #
 # Script: classification-banner.py
 # Description: Displays a Classification for an Xwindows session
-# Copyright: Red Hat Consulting, 2014
-# Author: Frank Caviggia <fcaviggi (at) redhat.com>
-# Version: 1.6.3
+# Copyright: Frank Caviggia, 2016
+# Author: Frank Caviggia <fcaviggi (at) gmail.com>
+# Version: 1.6.4
 # License: GPLv2
 
 import sys,os,optparse,time,getpass
@@ -29,7 +26,11 @@ CONF_FILE = "/etc/classification-banner"
 
 # Returns Username
 def get_user():
-    user = getpass.getuser()
+    try:
+        user = getpass.getuser()
+    except:
+        user = ''
+        pass
     return user
 
 # Returns Hostname
