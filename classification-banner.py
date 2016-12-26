@@ -6,7 +6,7 @@
 # Script: classification-banner.py
 # Description: Displays a Classification for an Xwindows session
 # Copyright: Frank Caviggia, 2016
-# Author: Frank Caviggia <fcaviggi (at) gmail.com>
+# Author: Frank Caviggia <fcaviggia (at) gmail.com>
 # Version: 1.6.4
 # License: GPLv2
 
