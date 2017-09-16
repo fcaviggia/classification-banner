@@ -1,21 +1,21 @@
 #!/usr/bin/python
 # Classification Banner
 #
-# Last update was 17 December 2016
+# Last update was 16 September 2017
 #
 # Script: classification-banner.py
 # Description: Displays a Classification for an Xwindows session
-# Copyright: Frank Caviggia, 2016
+# Copyright: Frank Caviggia, 2017
 # Author: Frank Caviggia <fcaviggia (at) gmail.com>
-# Version: 1.6.4
+# Version: 1.6.5
 # License: GPLv2
 
-import sys,os,optparse,time,getpass
+import sys,os,optparse,time
 from socket import gethostname
 
 # Check if DISPLAY variable is set
 try:
-    os.environ['DISPLAY']
+    os.environ["DISPLAY"]
     import pygtk,gtk
 except:
     print("Error: DISPLAY environment variable not set.")
@@ -27,7 +27,7 @@ CONF_FILE = "/etc/classification-banner"
 # Returns Username
 def get_user():
     try:
-        user = getpass.getuser()
+        user = os.getlogin()
     except:
         user = ''
         pass
@@ -226,8 +226,8 @@ class Display_Banner:
 
         defaults = {}
         defaults["message"] = config.get("message", "UNCLASSIFIED")
-        defaults["fgcolor"] = config.get("fgcolor", "#000000")
-        defaults["bgcolor"] = config.get("bgcolor", "#00CC00")
+        defaults["fgcolor"] = config.get("fgcolor", "#FFFFFF")
+        defaults["bgcolor"] = config.get("bgcolor", "#007A33")
         defaults["face"] = config.get("face", "liberation-sans")
         defaults["size"] = config.get("size", "small")
         defaults["weight"] = config.get("weight", "bold")
@@ -285,7 +285,7 @@ class Display_Banner:
         if options.hres == 0 or options.vres == 0:
             # Try Xrandr to determine primary monitor resolution
             try:
-                self.screen = os.popen("xrandr | grep ' primary ' | awk '{ print $4 }'").readlines()[0]
+                self.screen = os.popen("xrandr | grep ' current ' | awk '{ print $8$9$10+0 }'").readlines()[0]
                 self.x = self.screen.split('x')[0]
                 self.y = self.screen.split('x')[1].split('+')[0]
 
@@ -296,23 +296,14 @@ class Display_Banner:
                     self.y = self.screen.split('x')[1].split('+')[0]
 
                 except:
-                    try:
-                        self.screen = os.popen("xrandr | grep '^\*0' | awk '{ print $2$3$4 }'").readlines()[0]
-                        self.x = self.screen.split('x')[0]
-                        self.y = self.screen.split('x')[1].split('+')[0]
-                    except:
-                        # Fail back to GTK method
-                        self.display = gtk.gdk.display_get_default()
-                        self.screen = self.display.get_default_screen()
-                        self.num_monitor = self.screen.get_n_monitors()
-                        self.x = self.screen.get_width()
-                        self.y = self.screen.get_height()
+                    self.screen = os.popen("xrandr | grep '^\*0' | awk '{ print $2$3$4 }'").readlines()[0]
+                    self.x = self.screen.split('x')[0]
+                    self.y = self.screen.split('x')[1].split('+')[0]
 
                 else:
                     # Fail back to GTK method
                     self.display = gtk.gdk.display_get_default()
                     self.screen = self.display.get_default_screen()
-                    self.num_monitor = self.screen.get_n_monitors()
                     self.x = self.screen.get_width()
                     self.y = self.screen.get_height()
         else:

@@ -23,8 +23,8 @@ Classification Banner Usage
 Options should be placed in the '/etc/classification-banner' file.
 
  message      - The classification level to display (Default: 'UNCLASSIFIED')
- fgcolor      - Foreground color of the text to display (Default: '#00CC00' "Green")
- bgcolor      - Background color of the banner the text is against (Default: '#000000' "Black")
+ fgcolor      - Foreground color of the text to display (Default: '#007A33' "Green")
+ bgcolor      - Background color of the banner the text is against (Default: '#FFFFFF' "White")
  face         - Font face to use for the displayed text (Default: 'liberation-sans')
  size         - Size of font to use for text (Default: 'small')
  weight       - Bold or normal (Default: 'bold')
@@ -55,29 +55,63 @@ These are examples for the configuration of the Classification Banner
 using the '/etc/classification-banner' file for various classifications
 based upon generally accepted color guidelines in the DoD/IC.
 
+Note: The U.S. General Services Administration (GSA) no longer publishes
+the color values used for printing U.S. Government Standard Forms (SF)
+such as the SF-710 (Unclassified Label), SF-708 (Confidential Label),
+SF-707 (Secret Label), SF-706 (Top Secret Label), or SF-712 (Classified 
+SCI Label): http://www.gsa.gov/portal/content/142623
+
+However, archived copies of superseded U.S. Government documents provide
+the previously published Pantone values as well as a publicly available
+contract document on gpo.gov:
+
+"GENERAL TERMS, CONDITIONS, AND SPECIFICATIONS For the Procurement of
+Labels as requisitioned from the U.S. Government Publishing Office (GPO)
+by the Federal Prison Industries (FPI) Unicor"; U.S. Government Publishing
+Office; 28 April 2016;
+
+https://www.gpo.gov/gpo/abstracts/getcontentpdf.action?filePath=Dallas%2Fab1724s.pdf
+
+SF-710: Pantone 356 - (Reverse printing) White on Green
+SF-708: Pantone 286 - (Reverse printing) White on Blue
+SF-707: Pantone 186 - (Reverse printing) White on Red
+SF-706: Pantone 165 - (Reverse printing) White on Orange
+SF-712: Pantone 101 - Black on Yellow
+
+The following are the approximate RGB and HEX values of the above Pantone
+Solid Coated values as provided by the Pantone website:
+
+SF-710: RGB:   0, 122,  51 / HEX: #007a33 | https://www.pantone.com/color-finder/356-C
+SF-708: RGB:   0,  51, 160 / HEX: #0033a0 | https://www.pantone.com/color-finder/286-C
+SF-707: RGB: 200,  16,  46 / HEX: #c8102e | https://www.pantone.com/color-finder/186-C
+SF-706: RGB: 255, 103,  31 / HEX: #ff671f | https://www.pantone.com/color-finder/165-C
+SF-712: RGB: 247, 234,  72 / HEX: #f7ea48 | https://www.pantone.com/color-finder/101-C
+
     Default (UNCLASSIFIED)
         
     CONFIDENTIAL
     
         message='CONFIDENTIAL'
-        bgcolor='#33FFFF'
+	fgcolor='#FFFFFF'
+        bgcolor='#0033A0'
     
     SECRET
         
         message='SECRET'
         fgcolor='#FFFFFF'
-        bgcolor='#FF0000'
+        bgcolor='#C8102E'
     
     TOP SECRET
         
         message='TOP SECRET'
         fgcolor='#FFFFFF'
-        bgcolor='#FF9900'
+        bgcolor='#FF671F'
         
     TOP SECRET//SCI
         
         message='TOP SECRET//SCI'
-        bgcolor='#FFFF00'
+	fgcolor="#000000'
+        bgcolor='#F7EA48'
 
 
 Autostart
