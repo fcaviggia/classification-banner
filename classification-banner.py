@@ -1,13 +1,13 @@
 #!/usr/bin/python
 # Classification Banner
 #
-# Last update was 16 September 2017
+# Last update was 02 July 2018
 #
 # Script: classification-banner.py
 # Description: Displays a Classification for an Xwindows session
 # Copyright: Frank Caviggia, 2017
 # Author: Frank Caviggia <fcaviggia (at) gmail.com>
-# Version: 1.6.5
+# Version: 1.6.6
 # License: GPLv2
 
 import sys,os,optparse,time
@@ -15,11 +15,14 @@ from socket import gethostname
 
 # Check if DISPLAY variable is set
 try:
-    os.environ["DISPLAY"]
-    import pygtk,gtk
+	os.environ["DISPLAY"]
+	import pygtk,gtk
 except:
-    print("Error: DISPLAY environment variable not set.")
-    sys.exit(1)
+	try:
+		import Gtk
+	except:
+		print("Error: DISPLAY environment variable not set.")
+		sys.exit(1)
 
 # Global Configuration File
 CONF_FILE = "/etc/classification-banner"
@@ -285,13 +288,13 @@ class Display_Banner:
         if options.hres == 0 or options.vres == 0:
             # Try Xrandr to determine primary monitor resolution
             try:
-                self.screen = os.popen("xrandr | grep ' current ' | awk '{ print $8$9$10+0 }'").readlines()[0]
+                self.screen = os.popen("xrandr | grep ' connected ' | awk '{ print $3 }'").readlines()[0]
                 self.x = self.screen.split('x')[0]
                 self.y = self.screen.split('x')[1].split('+')[0]
 
             except:
                 try:
-                    self.screen = os.popen("xrandr | grep ' connected ' | awk '{ print $3 }'").readlines()[0]
+                    self.screen = os.popen("xrandr | grep ' current ' | awk '{ print $8$9$10+0 }'").readlines()[0]
                     self.x = self.screen.split('x')[0]
                     self.y = self.screen.split('x')[1].split('+')[0]
 
