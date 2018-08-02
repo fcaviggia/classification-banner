@@ -1,31 +1,28 @@
-#!/usr/bin/python
-# Classification Banner
 #
-# Last update was 02 July 2018
+# Copyright (C) 2018 classification-banner Contributors. See LICENSE for license
 #
-# Script: classification-banner.py
-# Description: Displays a Classification for an Xwindows session
-# Copyright: Frank Caviggia, 2017
-# Author: Frank Caviggia <fcaviggia (at) gmail.com>
-# Version: 1.6.6
-# License: GPLv2
 
-import sys,os,optparse,time
+import sys
+import os
+import optparse
+import time
 from socket import gethostname
-
-# Check if DISPLAY variable is set
-try:
-	os.environ["DISPLAY"]
-	import pygtk,gtk
-except:
-	try:
-		import Gtk
-	except:
-		print("Error: DISPLAY environment variable not set.")
-		sys.exit(1)
 
 # Global Configuration File
 CONF_FILE = "/etc/classification-banner"
+
+# Check if DISPLAY variable is set
+try:
+    os.environ["DISPLAY"]
+    import pygtk
+    import gtk
+except:
+    try:
+        import Gtk
+    except:
+        print("Error: DISPLAY environment variable not set.")
+        sys.exit(1)
+
 
 # Returns Username
 def get_user():
@@ -36,11 +33,13 @@ def get_user():
         pass
     return user
 
+
 # Returns Hostname
 def get_host():
     host = gethostname()
     host = host.split('.')[0]
     return host
+
 
 # Classification Banner Class
 class Classification_Banner:
@@ -48,7 +47,8 @@ class Classification_Banner:
 
     def __init__(self, message="UNCLASSIFIED", fgcolor="#000000",
                  bgcolor="#00CC00", face="liberation-sans", size="small",
-                 weight="bold", x=0, y=0, esc=True, opacity=0.75, sys_info=False):
+                 weight="bold", x=0, y=0, esc=True, opacity=0.75,
+                 sys_info=False):
 
         """Set up and display the main window
 
@@ -127,7 +127,7 @@ class Classification_Banner:
         self.user_label.set_use_markup(True)
         self.user_label.set_justify(gtk.JUSTIFY_LEFT)
         self.user_label.set_width_chars(20)
-        
+
         # Create the Right-Justified Vertical Box to Populate for ESC message
         self.vbox_esc_right = gtk.VBox()
         self.esc_label = gtk.Label(
@@ -361,7 +361,6 @@ class Display_Banner:
         return True
 
 
-# Main Program Loop
-if __name__ == "__main__":
+def main():
     run = Display_Banner()
     gtk.main()
