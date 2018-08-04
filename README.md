@@ -16,12 +16,19 @@ Selecting the classification window and pressing the ESC key
 will temporarily hide the window for 15 seconds, it will return
 to view after that
 
+Installation
+============
+To install directly from source, run the following command:
+```sh
+python setup.py install
+```
 
 Classification Banner Usage
 ===========================
 
-Options should be placed in the '/etc/classification-banner' file.
+Options should be placed in the `/etc/classification-banner` file.
 
+```
  message      - The classification level to display (Default: 'UNCLASSIFIED')
  fgcolor      - Foreground color of the text to display (Default: '#007A33' "Green")
  bgcolor      - Background color of the banner the text is against (Default: '#FFFFFF' "White")
@@ -33,9 +40,11 @@ Options should be placed in the '/etc/classification-banner' file.
  hres         - Manually Set Horiztonal Resolution (OPTIONAL) [ if hres is set, vres required ]
  vres         - Manually Set Horiztonal Resolution (OPTIONAL) [ if vres is set, hres required ]
  opacity      - Sets opacity - for composted window managers only (OPTIONAL) [float - range 0 .. 1] (Default 0.75)
- 
+```
+
 Command line options that correspond to the above settings:
 
+```
  -m, --message
  -f, --fgcolor
  -b, --bgcolor
@@ -47,6 +56,7 @@ Command line options that correspond to the above settings:
  -x, --hres
  -y, --vres
  -o, --opacity
+```
 
 Examples
 ========
@@ -81,6 +91,7 @@ SF-712: Pantone 101 - Black on Yellow
 The following are the approximate RGB and HEX values of the above Pantone
 Solid Coated values as provided by the Pantone website:
 
+```
 SF-710: RGB:   0, 122,  51 / HEX: #007a33 | https://www.pantone.com/color-finder/356-C
 SF-708: RGB:   0,  51, 160 / HEX: #0033a0 | https://www.pantone.com/color-finder/286-C
 SF-707: RGB: 200,  16,  46 / HEX: #c8102e | https://www.pantone.com/color-finder/186-C
@@ -112,7 +123,7 @@ SF-712: RGB: 247, 234,  72 / HEX: #f7ea48 | https://www.pantone.com/color-finder
         message='TOP SECRET//SCI'
 	fgcolor="#000000'
         bgcolor='#F7EA48'
-
+```
 
 Autostart
 =========
@@ -120,7 +131,8 @@ Autostart
 To auto-start the classification-banner script on the GNOME Desktop, 
 create the following file:
 
-# vi /etc/xdg/autostart/classification-banner.desktop
+```sh
+vi /etc/xdg/autostart/classification-banner.desktop
 
      [Desktop Entry]
      Name=Classification Banner
@@ -134,3 +146,4 @@ create the following file:
      X-GNOME-Autostart-enabled=true
      StartupNotify=false
      Terminal=false
+```
