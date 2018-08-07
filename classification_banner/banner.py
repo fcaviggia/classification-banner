@@ -1,27 +1,32 @@
 #
-# Copyright (C) 2018 classification-banner Contributors. See LICENSE for license
+# Copyright (C) 2018 SecurityCentral Contributors. See LICENSE for license
 #
 
 import sys
 import os
 import optparse
 import time
+from ConfigParser import SafeConfigParser
 from socket import gethostname
 
 # Global Configuration File
-CONF_FILE = "/etc/classification-banner"
+CONF_FILE = "/etc/classification-banner/banner.conf"
 
 # Check if DISPLAY variable is set
 try:
     os.environ["DISPLAY"]
+except:
+    print("Error: DISPLAY environment variable is not set.")
+    sys.exit(1)
+
+try:
     import pygtk
     import gtk
-except:
+except ImportError:
     try:
         import Gtk
-    except:
-        print("Error: DISPLAY environment variable not set.")
-        sys.exit(1)
+    except ImportError as e:
+        raise(e)
 
 
 # Returns Username
@@ -46,7 +51,7 @@ class Classification_Banner:
     """Class to create and refresh the actual banner."""
 
     def __init__(self, message="UNCLASSIFIED", fgcolor="#000000",
-                 bgcolor="#00CC00", face="liberation-sans", size="small",
+                 bgcolor="#00CC00", font="liberation-sans", size="small",
                  weight="bold", x=0, y=0, esc=True, opacity=0.75,
                  sys_info=False):
 
@@ -56,7 +61,7 @@ class Classification_Banner:
         message -- The classification level to display
         fgcolor -- Foreground color of the text to display
         bgcolor -- Background color of the banner the text is against
-        face    -- Font face to use for the displayed text
+        font    -- Font type to use for the displayed text
         size    -- Size of font to use for text
         weight  -- Bold or normal
         hres    -- Horizontal Screen Resolution (int) [ requires vres ]
@@ -105,7 +110,7 @@ class Classification_Banner:
         self.vbox_center = gtk.VBox()
         self.center_label = gtk.Label(
             "<span font_family='%s' weight='%s' foreground='%s' size='%s'>%s</span>" %
-            (face, weight, fgcolor, size, message))
+            (font, weight, fgcolor, size, message))
         self.center_label.set_use_markup(True)
         self.center_label.set_justify(gtk.JUSTIFY_CENTER)
         self.vbox_center.pack_start(self.center_label, True, True, 0)
@@ -114,7 +119,7 @@ class Classification_Banner:
         self.vbox_right = gtk.VBox()
         self.host_label = gtk.Label(
             "<span font_family='%s' weight='%s' foreground='%s' size='%s'>%s</span>" %
-            (face, weight, fgcolor, size, get_host()))
+            (font, weight, fgcolor, size, get_host()))
         self.host_label.set_use_markup(True)
         self.host_label.set_justify(gtk.JUSTIFY_RIGHT)
         self.host_label.set_width_chars(20)
@@ -123,7 +128,7 @@ class Classification_Banner:
         self.vbox_left = gtk.VBox()
         self.user_label = gtk.Label(
             "<span font_family='%s' weight='%s' foreground='%s' size='%s'>%s</span>" %
-            (face, weight, fgcolor, size, get_user()))
+            (font, weight, fgcolor, size, get_user()))
         self.user_label.set_use_markup(True)
         self.user_label.set_justify(gtk.JUSTIFY_LEFT)
         self.user_label.set_width_chars(20)
@@ -221,48 +226,47 @@ class Display_Banner:
 
     # Read Global configuration
     def configure(self):
-        config = {}
-        try:
-            execfile(CONF_FILE, config)
-        except:
-            pass
-
         defaults = {}
-        defaults["message"] = config.get("message", "UNCLASSIFIED")
-        defaults["fgcolor"] = config.get("fgcolor", "#FFFFFF")
-        defaults["bgcolor"] = config.get("bgcolor", "#007A33")
-        defaults["face"] = config.get("face", "liberation-sans")
-        defaults["size"] = config.get("size", "small")
-        defaults["weight"] = config.get("weight", "bold")
-        defaults["show_top"] = config.get("show_top", True)
-        defaults["show_bottom"] = config.get("show_bottom", True)
-        defaults["hres"] = config.get("hres", 0)
-        defaults["vres"] = config.get("vres", 0)
-        defaults["sys_info"] = config.get("sys_info", False)
-        defaults["opacity"] = config.get("opacity", 0.75)
-        defaults["esc"] = config.get("esc", True)
-        defaults["spanning"] = config.get("spanning", False)
+        defaults["message"] = "UNCLASSIFIED"
+        defaults["foreground"] = "#FFFFFF"
+        defaults["background"] = "#007A33"
+        defaults["font"] = "liberation-sans"
+        defaults["size"] = "small"
+        defaults["weight"] = "bold"
+        defaults["show_top"] = True
+        defaults["show_bottom"] = True
+        defaults["horizontal_resolution"] = 0
+        defaults["vertical_resolution"] = 0
+        defaults["sys_info"] = False
+        defaults["opacity"] = 0.75
+        defaults["esc"] = True
+        defaults["spanning"] = False
+
+        conf = SafeConfigParser()
+        conf.read(CONF_FILE)
+        for key, val in conf.items("global"):
+            defaults[key] = val
 
         # Use the global config to set defaults for command line options
         parser = optparse.OptionParser()
         parser.add_option("-m", "--message", default=defaults["message"],
                           help="Set the Classification message")
-        parser.add_option("-f", "--fgcolor", default=defaults["fgcolor"],
+        parser.add_option("-f", "--fgcolor", default=defaults["foreground"],
                           help="Set the Foreground (text) color")
-        parser.add_option("-b", "--bgcolor", default=defaults["bgcolor"],
+        parser.add_option("-b", "--bgcolor", default=defaults["background"],
                           help="Set the Background color")
-        parser.add_option("-x", "--hres", default=defaults["hres"], type="int",
+        parser.add_option("-x", "--hres", default=defaults["horizontal_resolution"], type="int",
                           help="Set the Horizontal Screen Resolution")
-        parser.add_option("-y", "--vres", default=defaults["vres"], type="int",
+        parser.add_option("-y", "--vres", default=defaults["vertical_resolution"], type="int",
                           help="Set the Vertical Screen Resolution")
         parser.add_option("-o", "--opacity", default=defaults["opacity"],
                           type="float", dest="opacity",
                           help="Set the window opacity for composted window managers")
-        parser.add_option("--face", default=defaults["face"], help="Font face")
+        parser.add_option("--font", default=defaults["font"], help="Font type")
         parser.add_option("--size", default=defaults["size"], help="Font size")
         parser.add_option("--weight", default=defaults["weight"],
                           help="Set the Font weight")
-        parser.add_option("--disable-esc-msg", default=defaults["esc"],
+        parser.add_option("--disable-esc", default=defaults["esc"],
                           dest="esc", action="store_false",
                           help="Disable the 'ESC to hide' message")
         parser.add_option("--hide-top", default=defaults["show_top"],
@@ -279,6 +283,7 @@ class Display_Banner:
                           help="Enable banner(s) to span across screens as a single banner")
 
         options, args = parser.parse_args()
+
         return options, args
 
     # Launch the Classification Banner Window(s)
@@ -330,7 +335,7 @@ class Display_Banner:
                     options.message,
                     options.fgcolor,
                     options.bgcolor,
-                    options.face,
+                    options.font,
                     options.size,
                     options.weight,
                     self.x,
@@ -345,7 +350,7 @@ class Display_Banner:
                     options.message,
                     options.fgcolor,
                     options.bgcolor,
-                    options.face,
+                    options.font,
                     options.size,
                     options.weight,
                     self.x,
@@ -358,6 +363,7 @@ class Display_Banner:
     def resize(self, widget, data=None):
         self.config, self.args = self.configure()
         self.execute(self.config)
+
         return True
 
 

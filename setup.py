@@ -23,11 +23,10 @@ example PII or SECRET Material being processed in a graphical
 session. The script has been tested on a variety of graphical
 environments such as GNOME2, GNOME3, KDE, twm, icewm, and Cinnamon.""",
     license="GPLv2",
-    author="Frank Caviggia",
-    author_email="fcaviggia@gmail.com",
-    maintainer="classification-banner Developers",
-    url="https://github.com/fcaviggia/classification-banner",
-    download_url="https://github.com/fcaviggia/classification-banner",
+    author="SecurityCentral Developers and Contributors",
+    maintainer="Security Central Developers",
+    url="https://github.com/SecurityCentral/classification-banner",
+    download_url="https://github.com/SecurityCentral/classification-banner/releases",
     platforms=["Linux"],
     python_requires=">=2.7.5,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*",
     classifiers=[
@@ -47,6 +46,4 @@ environments such as GNOME2, GNOME3, KDE, twm, icewm, and Cinnamon.""",
     ],
     packages=find_packages(),
     scripts=["bin/classification-banner"],
-    data_files=[('share/classification-banner', ['share/classification-banner-screenshot.png']),
-                ],
 )
