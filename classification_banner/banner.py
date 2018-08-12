@@ -42,7 +42,7 @@ def get_host():
 
 
 # Classification Banner Class
-class Classification_Banner:
+class ClassificationBanner:
     """Class to create and refresh the actual banner."""
 
     def __init__(self, message="UNCLASSIFIED", fgcolor="#000000",
@@ -201,7 +201,7 @@ class Classification_Banner:
         return True
 
 
-class Display_Banner:
+class DislayBanner:
 
     """Display Classification Banner Message"""
     def __init__(self):
@@ -326,7 +326,7 @@ class Display_Banner:
 
     def banners(self, options):
             if options.show_top:
-                top = Classification_Banner(
+                top = ClassificationBanner(
                     options.message,
                     options.fgcolor,
                     options.bgcolor,
@@ -341,7 +341,7 @@ class Display_Banner:
                 top.window.move(self.x_location, self.y_location)
 
             if options.show_bottom:
-                bottom = Classification_Banner(
+                bottom = ClassificationBanner(
                     options.message,
                     options.fgcolor,
                     options.bgcolor,
@@ -362,5 +362,5 @@ class Display_Banner:
 
 
 def main():
-    run = Display_Banner()
+    run = DislayBanner()
     gtk.main()
