@@ -3,7 +3,7 @@ import os
 import sys
 from setuptools import setup, find_packages
 
-VERSION = "1.6.6"
+VERSION = "1.7.0"
 
 PACKAGE_VERSION = {
     "classification-banner": "classification-banner == {}".format(VERSION),
@@ -47,6 +47,6 @@ environments such as GNOME2, GNOME3, KDE, twm, icewm, and Cinnamon.""",
     ],
     packages=find_packages(),
     scripts=["bin/classification-banner"],
-    data_files=[('share/classification-banner', ['share/classification-banner-screenshot.png']),
+    data_files=[('share/banner.conf', ['share/classification-banner-screenshot.png']),
                 ],
 )
