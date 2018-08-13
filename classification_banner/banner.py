@@ -4,9 +4,21 @@
 
 import sys
 import os
-import optparse
+from argparse import ArgumentParser, RawDescriptionHelpFormatter
+from tempfile import TemporaryFile
 import time
 from socket import gethostname
+
+# Python version check
+# Check the version by e.g., `if python.major is 3:`.  Available keys
+# are .major, .minor, .micro, .releaselevel, and .serial.  All are
+# integers except for .releaselevel (which are strings e.g., beta).
+python = sys.version_info
+
+if python.major is 3:
+    from ConfigParser import ConfigParser, MissingSectionHeaderError, DEFAULTSECTs
+else:
+    from ConfigParser import ConfigParser, MissingSectionHeaderError, DEFAULTSECT
 
 # Global Configuration File
 CONF_FILE = "/etc/classification-banner"
@@ -42,7 +54,7 @@ def get_host():
 
 
 # Classification Banner Class
-class Classification_Banner:
+class ClassificationBanner:
     """Class to create and refresh the actual banner."""
 
     def __init__(self, message="UNCLASSIFIED", fgcolor="#000000",
@@ -201,7 +213,7 @@ class Classification_Banner:
         return True
 
 
-class Display_Banner:
+class DislayBanner:
 
     """Display Classification Banner Message"""
     def __init__(self):
@@ -216,70 +228,132 @@ class Display_Banner:
             pass
 
         # Launch Banner
-        self.config, self.args = self.configure()
+        self.config = self.configure()
         self.execute(self.config)
 
-    # Read Global configuration
+    # Read configuration(s)
     def configure(self):
-        config = {}
-        try:
-            execfile(CONF_FILE, config)
-        except:
-            pass
-
         defaults = {}
-        defaults["message"] = config.get("message", "UNCLASSIFIED")
-        defaults["fgcolor"] = config.get("fgcolor", "#FFFFFF")
-        defaults["bgcolor"] = config.get("bgcolor", "#007A33")
-        defaults["face"] = config.get("face", "liberation-sans")
-        defaults["size"] = config.get("size", "small")
-        defaults["weight"] = config.get("weight", "bold")
-        defaults["show_top"] = config.get("show_top", True)
-        defaults["show_bottom"] = config.get("show_bottom", True)
-        defaults["hres"] = config.get("hres", 0)
-        defaults["vres"] = config.get("vres", 0)
-        defaults["sys_info"] = config.get("sys_info", False)
-        defaults["opacity"] = config.get("opacity", 0.75)
-        defaults["esc"] = config.get("esc", True)
-        defaults["spanning"] = config.get("spanning", False)
+        defaults["message"] = "UNCLASSIFIED"
+        defaults["fgcolor"] = "#FFFFFF"
+        defaults["bgcolor"] = "#007A33"
+        defaults["face"] = "liberation-sans"
+        defaults["size"] = "small"
+        defaults["weight"] = "bold"
+        defaults["show_top"] = True
+        defaults["show_bottom"] = True
+        defaults["hres"] = 0
+        defaults["vres"] = 0
+        defaults["sys_info"] = False
+        defaults["opacity"] = 0.75
+        defaults["esc"] = True
+        defaults["spanning"] = False
+
+        # Check if a configuration file was passed in from the command line
+        default_heading = DEFAULTSECT
+        conf_parser = ArgumentParser(
+            formatter_class=RawDescriptionHelpFormatter,
+            add_help=False)
+        conf_parser.add_argument("-c", "--config",
+                                help="Specify the configuration file",
+                                metavar="FILE")
+        conf_parser.add_argument("--heading",
+                                help="Specify the config. section to use.",
+                                default=default_heading)
+        options, args = conf_parser.parse_known_args()
+
+        config_file = None
+        if options.config:
+            config_file = os.path.abspath(options.config)
+            if not os.path.isfile(config_file):
+                print("ERROR: Specified configuration file does not exist.")
+                sys.exit(1)
+        else:
+            config_file = os.path.abspath(CONF_FILE)
+            if not os.path.isfile(config_file):
+                config_file = None
+
+        # In order to maintain backwards compatibility with the way the
+        # previous configuration file format, a dummy section may need
+        # to be added to the configuration file.  If this is the case,
+        # a temporary file is used in order to avoid overwriting the
+        # user's configuration.
+        config = ConfigParser()
+
+        if config_file is not None:
+            fp = open(config_file, "r")
+            while True:
+                try:
+                    if python.major is 3:
+                        config.read_file(fp, source=config_file)
+                    else:
+                        config.readfp(fp, config_file)
+                    break
+                except MissingSectionHeaderError:
+                    # Recreate the file, adding a default section.
+                    fp.close()
+                    fp = TemporaryFile()
+                    with open(config_file) as original:
+                        fp.write("[%s]\n" % default_heading + original.read())
+                    fp.seek(0)
+            fp.close()  # If this was a temporary file it will now be deleted.
+
+        # ConfigParser treats everything as strings and any quotation
+        # marks in a setting are explicitly added to the string.
+        # One way to fix this is to add everything to the defaults and
+        # then strip the quotation marks off of everything.
+        defaults.update(dict(config.items(options.heading)))
+        for key, val in defaults.items():
+            if config.has_option(options.heading, key):
+                defaults[key] = val.strip("\"'")
+        # TODO: This coercion section is hacky and should be fixed.
+        for key in ["show_top", "show_bottom", "sys_info", "esc", "spanning"]:
+            if config.has_option(options.heading, key):
+                defaults[key] = config.getboolean(options.heading, key)
+        for key in ["hres", "vres"]:
+            if config.has_option(options.heading, key):
+                defaults[key] = config.getint(options.heading, key)
+        for key in ["opacity"]:
+            if config.has_option(options.heading, key):
+                defaults[key] = config.getfloat(options.heading, key)
 
         # Use the global config to set defaults for command line options
-        parser = optparse.OptionParser()
-        parser.add_option("-m", "--message", default=defaults["message"],
+        parser = ArgumentParser(parents=[conf_parser])
+        parser.add_argument("-m", "--message", default=defaults["message"],
                           help="Set the Classification message")
-        parser.add_option("-f", "--fgcolor", default=defaults["fgcolor"],
+        parser.add_argument("-f", "--fgcolor", default=defaults["fgcolor"],
                           help="Set the Foreground (text) color")
-        parser.add_option("-b", "--bgcolor", default=defaults["bgcolor"],
+        parser.add_argument("-b", "--bgcolor", default=defaults["bgcolor"],
                           help="Set the Background color")
-        parser.add_option("-x", "--hres", default=defaults["hres"], type="int",
+        parser.add_argument("-x", "--hres", default=defaults["hres"], type=int,
                           help="Set the Horizontal Screen Resolution")
-        parser.add_option("-y", "--vres", default=defaults["vres"], type="int",
+        parser.add_argument("-y", "--vres", default=defaults["vres"], type=int,
                           help="Set the Vertical Screen Resolution")
-        parser.add_option("-o", "--opacity", default=defaults["opacity"],
-                          type="float", dest="opacity",
+        parser.add_argument("-o", "--opacity", default=defaults["opacity"],
+                          type=float, dest="opacity",
                           help="Set the window opacity for composted window managers")
-        parser.add_option("--face", default=defaults["face"], help="Font face")
-        parser.add_option("--size", default=defaults["size"], help="Font size")
-        parser.add_option("--weight", default=defaults["weight"],
+        parser.add_argument("--face", default=defaults["face"], help="Font face")
+        parser.add_argument("--size", default=defaults["size"], help="Font size")
+        parser.add_argument("--weight", default=defaults["weight"],
                           help="Set the Font weight")
-        parser.add_option("--disable-esc-msg", default=defaults["esc"],
+        parser.add_argument("--disable-esc-msg", default=defaults["esc"],
                           dest="esc", action="store_false",
                           help="Disable the 'ESC to hide' message")
-        parser.add_option("--hide-top", default=defaults["show_top"],
+        parser.add_argument("--hide-top", default=defaults["show_top"],
                           dest="show_top", action="store_false",
                           help="Disable the top banner")
-        parser.add_option("--hide-bottom", default=defaults["show_bottom"],
+        parser.add_argument("--hide-bottom", default=defaults["show_bottom"],
                           dest="show_bottom", action="store_false",
                           help="Disable the bottom banner")
-        parser.add_option("--system-info", default=defaults["sys_info"],
+        parser.add_argument("--system-info", default=defaults["sys_info"],
                           dest="sys_info", action="store_true",
                           help="Show user and hostname in the top banner")
-        parser.add_option("--enable-spanning", default=defaults["spanning"],
+        parser.add_argument("--enable-spanning", default=defaults["spanning"],
                           dest="spanning", action="store_true",
                           help="Enable banner(s) to span across screens as a single banner")
 
-        options, args = parser.parse_args()
-        return options, args
+        options = parser.parse_args()
+        return options
 
     # Launch the Classification Banner Window(s)
     def execute(self, options):
@@ -326,7 +400,7 @@ class Display_Banner:
 
     def banners(self, options):
             if options.show_top:
-                top = Classification_Banner(
+                top = ClassificationBanner(
                     options.message,
                     options.fgcolor,
                     options.bgcolor,
@@ -341,7 +415,7 @@ class Display_Banner:
                 top.window.move(self.x_location, self.y_location)
 
             if options.show_bottom:
-                bottom = Classification_Banner(
+                bottom = ClassificationBanner(
                     options.message,
                     options.fgcolor,
                     options.bgcolor,
@@ -362,5 +436,5 @@ class Display_Banner:
 
 
 def main():
-    run = Display_Banner()
+    run = DislayBanner()
     gtk.main()
