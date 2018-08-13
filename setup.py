@@ -34,7 +34,7 @@ environments such as GNOME2, GNOME3, KDE, twm, icewm, and Cinnamon.""",
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: System Administrators",
         ("License :: OSI Approved :: "
-         "GNU General Public License v3 (GPLv3)"),
+         "GNU General Public License v2 (GPLv2)"),
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
