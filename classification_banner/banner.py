@@ -15,10 +15,7 @@ from socket import gethostname
 # integers except for .releaselevel (which are strings e.g., beta).
 python = sys.version_info
 
-if python.major is 3:
-    from ConfigParser import ConfigParser, MissingSectionHeaderError, DEFAULTSECTs
-else:
-    from ConfigParser import ConfigParser, MissingSectionHeaderError, DEFAULTSECT
+from ConfigParser import ConfigParser, MissingSectionHeaderError, DEFAULTSECT
 
 # Global Configuration File
 CONF_FILE = "/etc/classification-banner"
