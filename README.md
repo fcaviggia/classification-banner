@@ -144,7 +144,7 @@ vi /etc/xdg/autostart/classification-banner.desktop
 
      [Desktop Entry]
      Name=Classification Banner
-     Exec=/usr/bin/classification-banner.py
+     Exec=/usr/bin/classification-banner
      Comment=User Notification for Security Level of System.
      Type=Application
      Encoding=UTF-8
