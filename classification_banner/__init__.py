@@ -1,3 +1,3 @@
 #
-# Copyright (C) 2018 SecurityCentral Contributors. See LICENSE for license
+# Copyright (C) 2018 classification-banner Contributors. See LICENSE for license
 #
