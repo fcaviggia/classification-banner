@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2018 classification-banner Contributors. See LICENSE for license
+# Copyright (C) 2018 SecurityCentral Contributors. See LICENSE for license
 #
 
 import sys
@@ -7,6 +7,7 @@ import os
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 from tempfile import TemporaryFile
 import time
+from ConfigParser import SafeConfigParser
 from socket import gethostname
 
 # Python version check
@@ -18,19 +19,23 @@ python = sys.version_info
 from ConfigParser import ConfigParser, MissingSectionHeaderError, DEFAULTSECT
 
 # Global Configuration File
-CONF_FILE = "/etc/classification-banner"
+CONF_FILE = "/etc/classification-banner/banner.conf"
 
 # Check if DISPLAY variable is set
 try:
     os.environ["DISPLAY"]
+except:
+    print("Error: DISPLAY environment variable is not set.")
+    sys.exit(1)
+
+try:
     import pygtk
     import gtk
-except:
+except ImportError:
     try:
         import Gtk
-    except:
-        print("Error: DISPLAY environment variable not set.")
-        sys.exit(1)
+    except ImportError as e:
+        raise(e)
 
 
 # Returns Username
@@ -55,7 +60,7 @@ class ClassificationBanner:
     """Class to create and refresh the actual banner."""
 
     def __init__(self, message="UNCLASSIFIED", fgcolor="#000000",
-                 bgcolor="#00CC00", face="liberation-sans", size="small",
+                 bgcolor="#00CC00", font="liberation-sans", size="small",
                  weight="bold", x=0, y=0, esc=True, opacity=0.75,
                  sys_info=False):
 
@@ -65,7 +70,7 @@ class ClassificationBanner:
         message -- The classification level to display
         fgcolor -- Foreground color of the text to display
         bgcolor -- Background color of the banner the text is against
-        face    -- Font face to use for the displayed text
+        font    -- Font type to use for the displayed text
         size    -- Size of font to use for text
         weight  -- Bold or normal
         hres    -- Horizontal Screen Resolution (int) [ requires vres ]
@@ -114,7 +119,7 @@ class ClassificationBanner:
         self.vbox_center = gtk.VBox()
         self.center_label = gtk.Label(
             "<span font_family='%s' weight='%s' foreground='%s' size='%s'>%s</span>" %
-            (face, weight, fgcolor, size, message))
+            (font, weight, fgcolor, size, message))
         self.center_label.set_use_markup(True)
         self.center_label.set_justify(gtk.JUSTIFY_CENTER)
         self.vbox_center.pack_start(self.center_label, True, True, 0)
@@ -123,7 +128,7 @@ class ClassificationBanner:
         self.vbox_right = gtk.VBox()
         self.host_label = gtk.Label(
             "<span font_family='%s' weight='%s' foreground='%s' size='%s'>%s</span>" %
-            (face, weight, fgcolor, size, get_host()))
+            (font, weight, fgcolor, size, get_host()))
         self.host_label.set_use_markup(True)
         self.host_label.set_justify(gtk.JUSTIFY_RIGHT)
         self.host_label.set_width_chars(20)
@@ -132,7 +137,7 @@ class ClassificationBanner:
         self.vbox_left = gtk.VBox()
         self.user_label = gtk.Label(
             "<span font_family='%s' weight='%s' foreground='%s' size='%s'>%s</span>" %
-            (face, weight, fgcolor, size, get_user()))
+            (font, weight, fgcolor, size, get_user()))
         self.user_label.set_use_markup(True)
         self.user_label.set_justify(gtk.JUSTIFY_LEFT)
         self.user_label.set_width_chars(20)
@@ -232,6 +237,7 @@ class DislayBanner:
     def configure(self):
         defaults = {}
         defaults["message"] = "UNCLASSIFIED"
+
         defaults["fgcolor"] = "#FFFFFF"
         defaults["bgcolor"] = "#007A33"
         defaults["face"] = "liberation-sans"
@@ -348,9 +354,9 @@ class DislayBanner:
         parser.add_argument("--enable-spanning", default=defaults["spanning"],
                           dest="spanning", action="store_true",
                           help="Enable banner(s) to span across screens as a single banner")
-
         options = parser.parse_args()
         return options
+
 
     # Launch the Classification Banner Window(s)
     def execute(self, options):
@@ -401,7 +407,7 @@ class DislayBanner:
                     options.message,
                     options.fgcolor,
                     options.bgcolor,
-                    options.face,
+                    options.font,
                     options.size,
                     options.weight,
                     self.x,
@@ -416,7 +422,7 @@ class DislayBanner:
                     options.message,
                     options.fgcolor,
                     options.bgcolor,
-                    options.face,
+                    options.font,
                     options.size,
                     options.weight,
                     self.x,
@@ -429,6 +435,7 @@ class DislayBanner:
     def resize(self, widget, data=None):
         self.config, self.args = self.configure()
         self.execute(self.config)
+
         return True
 
 
