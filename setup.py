@@ -3,10 +3,10 @@ import os
 import sys
 from setuptools import setup, find_packages
 
-VERSION = "1.6.7"
+VERSION = "1.7.0"
 
 PACKAGE_VERSION = {
-    "classification-banner": "classification-banner == {}".format(VERSION),
+    "classification-banner": "classification-banner == {0}".format(VERSION),
 }
 
 
@@ -33,7 +33,7 @@ environments such as GNOME2, GNOME3, KDE, twm, icewm, and Cinnamon.""",
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: System Administrators",
         ("License :: OSI Approved :: "
-         "GNU General Public License v3 (GPLv3)"),
+         "GNU General Public License v2 (GPLv2)"),
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
@@ -46,4 +46,6 @@ environments such as GNOME2, GNOME3, KDE, twm, icewm, and Cinnamon.""",
     ],
     packages=find_packages(),
     scripts=["bin/classification-banner"],
+    data_files=[('share/banner.conf', ['share/classification-banner-screenshot.png']),
+                ],
 )

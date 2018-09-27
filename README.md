@@ -68,8 +68,9 @@ based upon generally accepted color guidelines in the DoD/IC.
 Note: The U.S. General Services Administration (GSA) no longer publishes
 the color values used for printing U.S. Government Standard Forms (SF)
 such as the SF-710 (Unclassified Label), SF-708 (Confidential Label),
-SF-707 (Secret Label), SF-706 (Top Secret Label), or SF-712 (Classified 
-SCI Label): http://www.gsa.gov/portal/content/142623
+SF-707 (Secret Label), SF-706 (Top Secret Label), SF-712 (Classified 
+SCI Label), or SF-709 (Classified Label): 
+http://www.gsa.gov/portal/content/142623
 
 However, archived copies of superseded U.S. Government documents provide
 the previously published Pantone values as well as a publicly available
@@ -80,13 +81,14 @@ Labels as requisitioned from the U.S. Government Publishing Office (GPO)
 by the Federal Prison Industries (FPI) Unicor"; U.S. Government Publishing
 Office; 28 April 2016;
 
-https://www.gpo.gov/gpo/abstracts/getcontentpdf.action?filePath=Dallas%2Fab1724s.pdf
+https://www.gpo.gov/docs/default-source/contract-pricing/dallas/ab1724s.pdf
 
-SF-710: Pantone 356 - (Reverse printing) White on Green
-SF-708: Pantone 286 - (Reverse printing) White on Blue
-SF-707: Pantone 186 - (Reverse printing) White on Red
-SF-706: Pantone 165 - (Reverse printing) White on Orange
-SF-712: Pantone 101 - Black on Yellow
+SF-710: Pantone 356 - (Reverse printing) White on Green<br />
+SF-708: Pantone 286 - (Reverse printing) White on Blue<br />
+SF-707: Pantone 186 - (Reverse printing) White on Red<br />
+SF-706: Pantone 165 - (Reverse printing) White on Orange<br />
+SF-712: Pantone 101 - Black on Yellow<br />
+SF-709: Pantone 264 - Black on Lavender<br />
 
 The following are the approximate RGB and HEX values of the above Pantone
 Solid Coated values as provided by the Pantone website:
@@ -97,6 +99,7 @@ SF-708: RGB:   0,  51, 160 / HEX: #0033a0 | https://www.pantone.com/color-finder
 SF-707: RGB: 200,  16,  46 / HEX: #c8102e | https://www.pantone.com/color-finder/186-C
 SF-706: RGB: 255, 103,  31 / HEX: #ff671f | https://www.pantone.com/color-finder/165-C
 SF-712: RGB: 247, 234,  72 / HEX: #f7ea48 | https://www.pantone.com/color-finder/101-C
+SF-709: RGB: 193, 167, 226 / HEX: #c1a7e2 | https://www.pantone.com/color-finder/264-C
 
     Default (UNCLASSIFIED)
         
@@ -123,6 +126,11 @@ SF-712: RGB: 247, 234,  72 / HEX: #f7ea48 | https://www.pantone.com/color-finder
         message='TOP SECRET//SCI'
 	fgcolor="#000000'
         bgcolor='#F7EA48'
+
+    CLASSIFIED
+    
+        message='CLASSIFIED'
+        fgcolor="#000000"
 ```
 
 Autostart
@@ -136,7 +144,7 @@ vi /etc/xdg/autostart/classification-banner.desktop
 
      [Desktop Entry]
      Name=Classification Banner
-     Exec=/usr/local/bin/classification-banner.py
+     Exec=/usr/bin/classification-banner
      Comment=User Notification for Security Level of System.
      Type=Application
      Encoding=UTF-8
