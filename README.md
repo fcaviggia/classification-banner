@@ -26,19 +26,19 @@ python setup.py install
 Classification Banner Usage
 ===========================
 
-Options should be placed in the `/etc/classification-banner/banner.conf` file.
+Options should be placed in the `/etc/classification-banner` file.
 
 ```
  message      - The classification level to display (Default: 'UNCLASSIFIED')
- foreground_color      - Foreground color of the text to display (Default: '#007A33' "Green")
- background_color      - Background color of the banner the text is against (Default: '#FFFFFF' "White")
+ fgcolor      - Foreground color of the text to display (Default: '#007A33' "Green")
+ bgcolor      - Background color of the banner the text is against (Default: '#FFFFFF' "White")
  face         - Font face to use for the displayed text (Default: 'liberation-sans')
  size         - Size of font to use for text (Default: 'small')
  weight       - Bold or normal (Default: 'bold')
  show_top     - Show top banner (Default: True)
  show_bottom  - Show bottom banner (Default: True)
- horizontal_resolution         - Manually Set Horiztonal Resolution (OPTIONAL) [ if hres is set, vres required ]
- vertical_resolution           - Manually Set Horiztonal Resolution (OPTIONAL) [ if vres is set, hres required ]
+ hres         - Manually Set Horiztonal Resolution (OPTIONAL) [ if hres is set, vres required ]
+ vres         - Manually Set Horiztonal Resolution (OPTIONAL) [ if vres is set, hres required ]
  opacity      - Sets opacity - for composted window managers only (OPTIONAL) [float - range 0 .. 1] (Default 0.75)
 ```
 
@@ -62,7 +62,7 @@ Examples
 ========
 
 These are examples for the configuration of the Classification Banner
-using the `/etc/classification-banner/banner.conf` file for various classifications
+using the '/etc/classification-banner' file for various classifications
 based upon generally accepted color guidelines in the DoD/IC.
 
 Note: The U.S. General Services Administration (GSA) no longer publishes
