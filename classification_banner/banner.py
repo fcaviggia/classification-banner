@@ -89,7 +89,8 @@ class ClassificationBanner:
         self.window = gtk.Window()
         self.window.set_position(gtk.WIN_POS_CENTER)
         self.window.connect("hide", self.restore)
-        self.window.connect("key-press-event", self.keypress)
+        if esc:
+            self.window.connect("key-press-event", self.keypress)
         self.window.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse(bgcolor))
         self.window.set_property('skip-taskbar-hint', True)
         self.window.set_property('skip-pager-hint', True)
@@ -333,9 +334,9 @@ class DislayBanner:
         parser.add_argument("--size", default=defaults["size"], help="Font size")
         parser.add_argument("--weight", default=defaults["weight"],
                           help="Set the Font weight")
-        parser.add_argument("--disable-esc-msg", default=defaults["esc"],
+        parser.add_argument("--disable-esc", default=defaults["esc"],
                           dest="esc", action="store_false",
-                          help="Disable the 'ESC to hide' message")
+                          help="Disable the 'ESC to hide' feature and don't show the banner message")
         parser.add_argument("--hide-top", default=defaults["show_top"],
                           dest="show_top", action="store_false",
                           help="Disable the top banner")
