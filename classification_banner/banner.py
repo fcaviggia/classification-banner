@@ -10,10 +10,10 @@ import time
 from socket import gethostname
 
 # Python version check
-# Check the version by e.g., `if python.major is 3:`.  Available keys
-# are .major, .minor, .micro, .releaselevel, and .serial.  All are
-# integers except for .releaselevel (which are strings e.g., beta).
-python = sys.version_info
+# Check the version by comparing sys.hexversion to the desired version
+# `if sys.hexversion < 0x02070000:`
+# or
+# `if sys.hexversion >= 0x03000000:`
 
 from ConfigParser import ConfigParser, MissingSectionHeaderError, DEFAULTSECT
 
@@ -282,7 +282,7 @@ class DislayBanner:
             fp = open(config_file, "r")
             while True:
                 try:
-                    if python.major is 3:
+                    if sys.hexversion >= 0x03000000:
                         config.read_file(fp, source=config_file)
                     else:
                         config.readfp(fp, config_file)
