@@ -7,4 +7,5 @@ The following people have contributed to the classification-banner project
 * Frank Caviggia <fcaviggia@gmail.com>
 * Brian Clemens <brianfclemens@gmail.com>
 * Gunnar Hellekson <gunnar@hellekson.com>
+* Richard D. Thompson II <rick@rdt2.net>
 * Chris Waltrip <chris@walt.rip>
