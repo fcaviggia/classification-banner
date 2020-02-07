@@ -428,7 +428,7 @@ class DislayBanner:
 
     # Relaunch the Classification Banner on Screen Resize
     def resize(self, widget, data=None):
-        self.config, self.args = self.configure()
+        self.config = self.configure()
         self.execute(self.config)
         return True
 
