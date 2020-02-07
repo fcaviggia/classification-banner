@@ -183,6 +183,7 @@ class ClassificationBanner:
         self.window.add(self.hbox)
         self.window.show_all()
         self.width, self.height = self.window.get_size()
+        self.window.set_resizable(False)
 
     # Restore Minimized Window
     def restore(self, widget, data=None):
