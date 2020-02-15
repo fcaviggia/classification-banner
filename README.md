@@ -140,7 +140,7 @@ SF-709: RGB: 193, 167, 226 / HEX: #c1a7e2 | https://www.pantone.com/color-finder
 Autostart
 =========
 
-To auto-start the classification-banner script on the GNOME Desktop, 
+To auto-start the classification-banner script on the GNOME or KDE Desktop, 
 create the following file:
 
 ```sh
