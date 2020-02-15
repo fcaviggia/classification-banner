@@ -29,17 +29,19 @@ Classification Banner Usage
 Options should be placed in the `/etc/classification-banner` file.
 
 ```
- message      - The classification level to display (Default: 'UNCLASSIFIED')
- fgcolor      - Foreground color of the text to display (Default: '#007A33' "Green")
- bgcolor      - Background color of the banner the text is against (Default: '#FFFFFF' "White")
- face         - Font face to use for the displayed text (Default: 'liberation-sans')
- size         - Size of font to use for text (Default: 'small')
- weight       - Bold or normal (Default: 'bold')
- show_top     - Show top banner (Default: True)
- show_bottom  - Show bottom banner (Default: True)
- hres         - Manually Set Horiztonal Resolution (OPTIONAL) [ if hres is set, vres required ]
- vres         - Manually Set Horiztonal Resolution (OPTIONAL) [ if vres is set, hres required ]
- opacity      - Sets opacity - for composted window managers only (OPTIONAL) [float - range 0 .. 1] (Default 0.75)
+ message        - The classification level to display (Default: 'UNCLASSIFIED')
+ fgcolor        - Foreground color of the text to display (Default: '#007A33' "Green")
+ bgcolor        - Background color of the banner the text is against (Default: '#FFFFFF' "White")
+ face           - Font face to use for the displayed text (Default: 'liberation-sans')
+ size           - Size of font to use for text (Default: 'small')
+ weight         - Bold or normal (Default: 'bold')
+ show_top       - Show top banner (Default: True)
+ show_bottom    - Show bottom banner (Default: True)
+ spanning       - For multi-montior setups, sets whether one continuous banner stretches across all displays or each individual display has its own banner (Default: False)
+ hres           - Manually Set Horiztonal Resolution (OPTIONAL) [ if hres is set, vres required ]
+ vres           - Manually Set Horiztonal Resolution (OPTIONAL) [ if vres is set, hres required ]
+ opacity        - Sets opacity - for composited window managers only (OPTIONAL) [float - range 0 .. 1] (Default 0.75)
+ taskbar_offset - For multi-monitor setups with spanning off, sets an offset in pixels corresponding to the size of a vertically-aligned taskbar, such as a default Ubuntu Gnome environment. This prevents the first display's banner from overlapping in an unsightly way onto the next monitor
 ```
 
 Command line options that correspond to the above settings:
@@ -53,9 +55,11 @@ Command line options that correspond to the above settings:
  --weight
  --hide-top
  --hide-bottom
+ --spanning
  -x, --hres
  -y, --vres
  -o, --opacity
+ --taskbar-offset
 ```
 
 Examples
@@ -136,22 +140,24 @@ SF-709: RGB: 193, 167, 226 / HEX: #c1a7e2 | https://www.pantone.com/color-finder
 Autostart
 =========
 
-To auto-start the classification-banner script on the GNOME Desktop, 
+To auto-start the classification-banner script on the GNOME or KDE Desktop, 
 create the following file:
 
 ```sh
 vi /etc/xdg/autostart/classification-banner.desktop
 
-     [Desktop Entry]
-     Name=Classification Banner
-     Exec=/usr/bin/classification-banner
-     Comment=User Notification for Security Level of System.
-     Type=Application
-     Encoding=UTF-8
-     Version=1.0
-     MimeType=application/python;
-     Categories=Utility;
-     X-GNOME-Autostart-enabled=true
-     StartupNotify=false
-     Terminal=false
+    [Desktop Entry]
+    Name=Classification Banner
+    Exec=/usr/local/bin/classification-banner
+    Comment=User Notification for Security Level of System.
+    Type=Application
+    Encoding=UTF-8
+    Version=1.0
+    MimeType=application/python;
+    Categories=Utility;
+    X-GNOME-Autostart-enabled=true
+    X-KDE-autostart-phase=2
+    X-KDE-StartupNotify=false
+    StartupNotify=false
+    Terminal=false
 ```

@@ -57,7 +57,7 @@ class ClassificationBanner:
     def __init__(self, message="UNCLASSIFIED", fgcolor="#000000",
                  bgcolor="#00CC00", face="liberation-sans", size="small",
                  weight="bold", x=0, y=0, esc=True, opacity=0.75,
-                 sys_info=False):
+                 sys_info=False, taskbar_offset=0):
 
         """Set up and display the main window
 
@@ -71,6 +71,7 @@ class ClassificationBanner:
         hres    -- Horizontal Screen Resolution (int) [ requires vres ]
         vres    -- Vertical Screen Resolution (int) [ requires hres ]
         opacity -- Opacity of window (float) [0 .. 1, default 0.75]
+        taskbar_offset -- The size of the taskbar in pixels to prevent overlapping on multi-monitor setups
         """
         self.hres = x
         self.vres = y
@@ -154,36 +155,31 @@ class ClassificationBanner:
         self.empty_label.set_use_markup(True)
         self.empty_label.set_width_chars(20)
 
-        if not esc:
-            if not sys_info:
-                self.hbox.pack_start(self.vbox_center, True, True, 0)
-            else:
-                self.vbox_right.pack_start(self.host_label, True, True, 0)
-                self.vbox_left.pack_start(self.user_label, True, True, 0)
-                self.hbox.pack_start(self.vbox_right, False, True, 20)
-                self.hbox.pack_start(self.vbox_center, True, True, 0)
-                self.hbox.pack_start(self.vbox_left, False, True, 20)
-
-        else:
-            if esc and not sys_info:
-                self.empty_label.set_justify(gtk.JUSTIFY_LEFT)
-                self.vbox_empty.pack_start(self.empty_label, True, True, 0)
-                self.vbox_esc_right.pack_start(self.esc_label, True, True, 0)
-                self.hbox.pack_start(self.vbox_esc_right, False, True, 0)
-                self.hbox.pack_start(self.vbox_center, True, True, 0)
-                self.hbox.pack_start(self.vbox_empty, False, True, 0)
-
-        if sys_info:
-                self.vbox_right.pack_start(self.host_label, True, True, 0)
-                self.vbox_left.pack_start(self.user_label, True, True, 0)
-                self.hbox.pack_start(self.vbox_right, False, True, 20)
-                self.hbox.pack_start(self.vbox_center, True, True, 0)
-                self.hbox.pack_start(self.vbox_left, False, True, 20)
+        if not esc and not sys_info:
+            self.hbox.pack_start(self.vbox_center, True, True, 0)
+        elif not esc and sys_info:
+            self.vbox_right.pack_start(self.host_label, True, True, 0)
+            self.vbox_left.pack_start(self.user_label, True, True, 0)
+            self.hbox.pack_start(self.vbox_right, False, True, 20)
+            self.hbox.pack_start(self.vbox_center, True, True, 0)
+            self.hbox.pack_start(self.vbox_left, False, True, 20)
+        elif esc and not sys_info:
+            self.empty_label.set_justify(gtk.JUSTIFY_LEFT)
+            self.vbox_empty.pack_start(self.empty_label, True, True, 0)
+            self.vbox_esc_right.pack_start(self.esc_label, True, True, 0)
+            self.hbox.pack_start(self.vbox_esc_right, False, True, 0)
+            self.hbox.pack_start(self.vbox_center, True, True, 0)
+            self.hbox.pack_start(self.vbox_empty, False, True, 0)
+        elif esc and sys_info:
+            self.vbox_right.pack_start(self.host_label, True, True, 0)
+            self.vbox_left.pack_start(self.user_label, True, True, 0)
+            self.hbox.pack_start(self.vbox_right, False, True, 20)
+            self.hbox.pack_start(self.vbox_center, True, True, 0)
+            self.hbox.pack_start(self.vbox_left, False, True, 20)
 
         self.window.add(self.hbox)
         self.window.show_all()
         self.width, self.height = self.window.get_size()
-
     # Restore Minimized Window
     def restore(self, widget, data=None):
         self.window.deiconify()
@@ -211,7 +207,7 @@ class ClassificationBanner:
         return True
 
 
-class DislayBanner:
+class DisplayBanner:
 
     """Display Classification Banner Message"""
     def __init__(self):
@@ -246,6 +242,7 @@ class DislayBanner:
         defaults["opacity"] = 0.75
         defaults["esc"] = True
         defaults["spanning"] = False
+        defaults["taskbar_offset"] = 0
 
         # Check if a configuration file was passed in from the command line
         default_heading = DEFAULTSECT
@@ -308,7 +305,7 @@ class DislayBanner:
         for key in ["show_top", "show_bottom", "sys_info", "esc", "spanning"]:
             if config.has_option(options.heading, key):
                 defaults[key] = config.getboolean(options.heading, key)
-        for key in ["hres", "vres"]:
+        for key in ["hres", "vres", "taskbar_offset"]:
             if config.has_option(options.heading, key):
                 defaults[key] = config.getint(options.heading, key)
         for key in ["opacity"]:
@@ -349,18 +346,23 @@ class DislayBanner:
         parser.add_argument("--enable-spanning", default=defaults["spanning"],
                           dest="spanning", action="store_true",
                           help="Enable banner(s) to span across screens as a single banner")
+        parser.add_argument("--taskbar-offset", default=defaults["taskbar_offset"], type=int,
+                          help="Set the offset for the size of the task bar")   
 
         options = parser.parse_args()
         return options
 
     # Launch the Classification Banner Window(s)
     def execute(self, options):
-        self.num_monitor = 0
+        self.num_monitor = self.monitor.get_n_monitors()
 
         if options.hres == 0 or options.vres == 0:
             # Try Xrandr to determine primary monitor resolution
             try:
                 self.screen = os.popen("xrandr | grep ' connected ' | awk '{ print $3 }'").readlines()[0]
+                if ("+" in self.screen):
+                    # This means a multi-monitor setup. The GTK method fallback will properly handle this.
+                    raise Exception
                 self.x = self.screen.split('x')[0]
                 self.y = self.screen.split('x')[1].split('+')[0]
 
@@ -386,10 +388,18 @@ class DislayBanner:
             self.x = options.hres
             self.y = options.vres
 
+        
         if not options.spanning and self.num_monitor > 1:
-            for monitor in range(self.num_monitor):
-                mon_geo = self.screen.get_monitor_geometry(monitor)
+            # Get the geometry of the monitors. Subtract the user-defined taskbar_offset from the first monitor's self.x value
+            # Most Linux WMs report the entire size of the screen but don't mention the space that is always taken by the taskbar.
+            # If spanning is disabled, and both monitors have separate DisplayBanner instances, then the first monitor's banner will
+            # overlap into the second's, and if the user is using Gnome, they'll be at different heights, which is ugly. 
+            # TODO: If this is ever ported to Python 3, the GTK3 method get_monitor_workarea would be a much less hacky way of doing this.
+            for i in range(self.num_monitor):
+                mon_geo = self.screen.get_monitor_geometry(i)
                 self.x_location, self.y_location, self.x, self.y = mon_geo
+                if (i == 0):
+                    self.x -= options.taskbar_offset
                 self.banners(options)
         else:
             self.x_location = 0
@@ -409,7 +419,8 @@ class DislayBanner:
                     self.y,
                     options.esc,
                     options.opacity,
-                    options.sys_info)
+                    options.sys_info,
+                    options.taskbar_offset)
                 top.window.move(self.x_location, self.y_location)
 
             if options.show_bottom:
@@ -423,7 +434,8 @@ class DislayBanner:
                     self.x,
                     self.y,
                     options.esc,
-                    options.opacity)
+                    options.opacity,
+                    options.taskbar_offset)
                 bottom.window.move(self.x_location, int(bottom.vres))
 
     # Relaunch the Classification Banner on Screen Resize
@@ -434,5 +446,5 @@ class DislayBanner:
 
 
 def main():
-    run = DislayBanner()
+    run = DisplayBanner()
     gtk.main()
