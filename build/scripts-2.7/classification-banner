@@ -1,8 +1,0 @@
-#!/usr/bin/python
-#
-# Copyright (C) 2018 classification-banner Contributors. See LICENSE for license
-#
-
-from classification_banner import banner
-
-banner.main()
