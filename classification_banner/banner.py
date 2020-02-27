@@ -57,7 +57,7 @@ class ClassificationBanner:
     def __init__(self, message="UNCLASSIFIED", fgcolor="#000000",
                  bgcolor="#00CC00", face="liberation-sans", size="small",
                  weight="bold", x=0, y=0, esc=True, opacity=0.75,
-                 sys_info=False, taskbar_offset=0):
+                 sys_info=False, taskbar_offset=0, banner_width=0, click_to_move=False):
 
         """Set up and display the main window
 
@@ -72,6 +72,8 @@ class ClassificationBanner:
         vres    -- Vertical Screen Resolution (int) [ requires hres ]
         opacity -- Opacity of window (float) [0 .. 1, default 0.75]
         taskbar_offset -- The size of the taskbar in pixels to prevent overlapping on multi-monitor setups
+        banner_width    -- The width of the banner in pixels. 0 is full-screen
+        click_to_move    -- Enables left-click to move between top and bottom and right-click to move left or right
         """
         self.hres = x
         self.vres = y
@@ -106,8 +108,11 @@ class ClassificationBanner:
         except:
             pass
 
-        # Set the default window size
-        self.window.set_default_size(int(self.hres), 5)
+        # Set the default window size, full-screen unless banner_width is set.
+        if (banner_width <= 0):
+            self.window.set_default_size(int(self.hres), 5)
+        else:
+            self.window.set_default_size(banner_width, 5)
 
         # Create Main Horizontal Box to Populate
         self.hbox = gtk.HBox()
@@ -242,6 +247,8 @@ class DisplayBanner:
         defaults["opacity"] = 0.75
         defaults["esc"] = True
         defaults["spanning"] = False
+        defaults["click_to_move"] = False
+        defaults["banner_width"] = 0
         defaults["taskbar_offset"] = 0
 
         # Check if a configuration file was passed in from the command line
@@ -302,10 +309,10 @@ class DisplayBanner:
             if config.has_option(options.heading, key):
                 defaults[key] = val.strip("\"'")
         # TODO: This coercion section is hacky and should be fixed.
-        for key in ["show_top", "show_bottom", "sys_info", "esc", "spanning"]:
+        for key in ["show_top", "show_bottom", "sys_info", "esc", "spanning", "click_to_move"]:
             if config.has_option(options.heading, key):
                 defaults[key] = config.getboolean(options.heading, key)
-        for key in ["hres", "vres", "taskbar_offset"]:
+        for key in ["hres", "vres", "taskbar_offset", "banner_width"]:
             if config.has_option(options.heading, key):
                 defaults[key] = config.getint(options.heading, key)
         for key in ["opacity"]:
@@ -346,6 +353,12 @@ class DisplayBanner:
         parser.add_argument("--enable-spanning", default=defaults["spanning"],
                           dest="spanning", action="store_true",
                           help="Enable banner(s) to span across screens as a single banner")
+        parser.add_argument("--enable-click_to_move", default=defaults["click_to_move"],
+                          dest="click_to_move", action="store_true",
+                          help="Enable left-click to move from top to bottom and right-click to move to the side.")
+        parser.add_argument("--banner_width", default=defaults["banner_width"],
+                          dest="banner_width", action="store_true",
+                          help="Set a width in pixels for the banner. 0 is full-screen")
         parser.add_argument("--taskbar-offset", default=defaults["taskbar_offset"], type=int,
                           help="Set the offset for the size of the task bar")   
 
@@ -407,36 +420,44 @@ class DisplayBanner:
             self.banners(options)
 
     def banners(self, options):
-            if options.show_top:
-                top = ClassificationBanner(
-                    options.message,
-                    options.fgcolor,
-                    options.bgcolor,
-                    options.face,
-                    options.size,
-                    options.weight,
-                    self.x,
-                    self.y,
-                    options.esc,
-                    options.opacity,
-                    options.sys_info,
-                    options.taskbar_offset)
-                top.window.move(self.x_location, self.y_location)
+        # If the banner_width option is set, calculate how to center it on the screen
+        if options.banner_width > 0:
+            self.x_location = self.x / 2 - options.banner_width / 2 + self.x_location
 
-            if options.show_bottom:
-                bottom = ClassificationBanner(
-                    options.message,
-                    options.fgcolor,
-                    options.bgcolor,
-                    options.face,
-                    options.size,
-                    options.weight,
-                    self.x,
-                    self.y,
-                    options.esc,
-                    options.opacity,
-                    options.taskbar_offset)
-                bottom.window.move(self.x_location, int(bottom.vres))
+        if options.show_top:
+            top = ClassificationBanner(
+                options.message,
+                options.fgcolor,
+                options.bgcolor,
+                options.face,
+                options.size,
+                options.weight,
+                self.x,
+                self.y,
+                options.esc,
+                options.opacity,
+                options.sys_info,
+                options.taskbar_offset,
+                options.banner_width,
+                options.click_to_move)
+            top.window.move(self.x_location, self.y_location)
+
+        if options.show_bottom:
+            bottom = ClassificationBanner(
+                options.message,
+                options.fgcolor,
+                options.bgcolor,
+                options.face,
+                options.size,
+                options.weight,
+                self.x,
+                self.y,
+                options.esc,
+                options.opacity,
+                options.taskbar_offset,
+                options.banner_width,
+                options.click_to_move)
+            bottom.window.move(self.x_location, int(bottom.vres))
 
     # Relaunch the Classification Banner on Screen Resize
     def resize(self, widget, data=None):
