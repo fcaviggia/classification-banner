@@ -220,6 +220,7 @@ class ClassificationBanner:
                 self.window.show()
                 self.window.deiconify()
                 self.window.present()
+        return True
 
     def mouseclick(self, widget, event=None):
         x, y = self.window.get_position()
