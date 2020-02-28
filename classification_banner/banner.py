@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2018 classification-banner Contributors. See LICENSE for license
+# Copyright (C) 2020 classification-banner Contributors. See LICENSE for license
 #
 
 import sys
@@ -57,7 +57,8 @@ class ClassificationBanner:
     def __init__(self, message="UNCLASSIFIED", fgcolor="#000000",
                  bgcolor="#00CC00", face="liberation-sans", size="small",
                  weight="bold", x=0, y=0, esc=True, opacity=0.75,
-                 sys_info=False, taskbar_offset=0, banner_width=0, click_to_move=False):
+                 sys_info=False, taskbar_offset=0, banner_width=0, 
+                 click_to_move=False, show_top=True, show_bottom=True):
 
         """Set up and display the main window
 
@@ -182,20 +183,31 @@ class ClassificationBanner:
             self.hbox.pack_start(self.vbox_center, True, True, 0)
             self.hbox.pack_start(self.vbox_left, False, True, 20)
 
-        self.window.add(self.hbox)
+        # Setup an EventBox to receive click events if click-to-move is enabled
+        if click_to_move:
+            # Create the EventBox to receive click input
+            self.eventbox = gtk.EventBox()
+            self.eventbox.connect("button_press_event", self.mouseclick)
+            self.eventbox.add(self.hbox)
+            self.eventbox.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse(bgcolor))
+            self.window.add(self.eventbox)
+            # Create state variable
+            self.centerStatus = "center"
+        else:
+            self.window.add(self.hbox)
+
         self.window.show_all()
         self.width, self.height = self.window.get_size()
+
     # Restore Minimized Window
     def restore(self, widget, data=None):
         self.window.deiconify()
         self.window.present()
-
         return True
 
     # Destroy Classification Banner Window on Resize (Display Banner Will Relaunch)
     def resize(self, widget, data=None):
         self.window.destroy()
-
         return True
 
     # Press ESC to hide window for 15 seconds
@@ -209,8 +221,18 @@ class ClassificationBanner:
                 self.window.deiconify()
                 self.window.present()
 
-        return True
-
+    def mouseclick(self, widget, event=None):
+        x, y = self.window.get_position()
+        if event.button == 1:
+            if self.centerStatus == "center":
+                self.window.move(x - 300, y)
+                self.centerStatus = "left"
+            elif self.centerStatus == "left":
+                self.window.move(x + 600, y)
+                self.centerStatus = "right"
+            elif self.centerStatus == "right":
+                self.window.move(x - 300, y)
+                self.centerStatus = "center"
 
 class DisplayBanner:
 
@@ -439,7 +461,9 @@ class DisplayBanner:
                 options.sys_info,
                 options.taskbar_offset,
                 options.banner_width,
-                options.click_to_move)
+                options.click_to_move,
+                options.show_top,
+                options.show_bottom)
             top.window.move(self.x_location, self.y_location)
 
         if options.show_bottom:
@@ -454,9 +478,12 @@ class DisplayBanner:
                 self.y,
                 options.esc,
                 options.opacity,
+                options.sys_info,
                 options.taskbar_offset,
                 options.banner_width,
-                options.click_to_move)
+                options.click_to_move,
+                options.show_top,
+                options.show_bottom)
             bottom.window.move(self.x_location, int(bottom.vres))
 
     # Relaunch the Classification Banner on Screen Resize
@@ -464,7 +491,6 @@ class DisplayBanner:
         self.config = self.configure()
         self.execute(self.config)
         return True
-
 
 def main():
     run = DisplayBanner()
