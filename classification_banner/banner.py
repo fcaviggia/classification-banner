@@ -63,18 +63,18 @@ class ClassificationBanner:
         """Set up and display the main window
 
         Keyword arguments:
-        message -- The classification level to display
-        fgcolor -- Foreground color of the text to display
-        bgcolor -- Background color of the banner the text is against
-        face    -- Font face to use for the displayed text
-        size    -- Size of font to use for text
-        weight  -- Bold or normal
-        hres    -- Horizontal Screen Resolution (int) [ requires vres ]
-        vres    -- Vertical Screen Resolution (int) [ requires hres ]
-        opacity -- Opacity of window (float) [0 .. 1, default 0.75]
+        message        -- The classification level to display
+        fgcolor        -- Foreground color of the text to display
+        bgcolor        -- Background color of the banner the text is against
+        face           -- Font face to use for the displayed text
+        size           -- Size of font to use for text
+        weight         -- Bold or normal
+        hres           -- Horizontal Screen Resolution (int) [ requires vres ]
+        vres           -- Vertical Screen Resolution (int) [ requires hres ]
+        opacity        -- Opacity of window (float) [0 .. 1, default 0.75]
         taskbar_offset -- The size of the taskbar in pixels to prevent overlapping on multi-monitor setups
-        banner_width    -- The width of the banner in pixels. 0 is full-screen
-        click_to_move    -- Enables left-click to move between top and bottom and right-click to move left or right
+        banner_width   -- The width of the banner in pixels. 0 is full-screen
+        click_to_move  -- Enables left-click to move between top and bottom and right-click to move left or right
         """
         self.hres = x
         self.vres = y
@@ -377,7 +377,7 @@ class DisplayBanner:
                           help="Enable banner(s) to span across screens as a single banner")
         parser.add_argument("--enable-click_to_move", default=defaults["click_to_move"],
                           dest="click_to_move", action="store_true",
-                          help="Enable left-click to move from top to bottom and right-click to move to the side.")
+                          help="Enable left-click to move the banner to the side to access UI elements that may be hidden.")
         parser.add_argument("--banner_width", default=defaults["banner_width"],
                           dest="banner_width", action="store_true",
                           help="Set a width in pixels for the banner. 0 is full-screen")
