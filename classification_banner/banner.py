@@ -58,7 +58,7 @@ class ClassificationBanner:
                  bgcolor="#00CC00", face="liberation-sans", size="small",
                  weight="bold", x=0, y=0, esc=True, opacity=0.75,
                  sys_info=False, taskbar_offset=0, banner_width=0, 
-                 click_to_move=False, show_top=True, show_bottom=True):
+                 click_to_move=False):
 
         """Set up and display the main window
 
@@ -461,9 +461,7 @@ class DisplayBanner:
                 options.sys_info,
                 options.taskbar_offset,
                 options.banner_width,
-                options.click_to_move,
-                options.show_top,
-                options.show_bottom)
+                options.click_to_move)
             top.window.move(self.x_location, self.y_location)
 
         if options.show_bottom:
@@ -481,9 +479,7 @@ class DisplayBanner:
                 options.sys_info,
                 options.taskbar_offset,
                 options.banner_width,
-                options.click_to_move,
-                options.show_top,
-                options.show_bottom)
+                options.click_to_move)
             bottom.window.move(self.x_location, int(bottom.vres))
 
     # Relaunch the Classification Banner on Screen Resize
