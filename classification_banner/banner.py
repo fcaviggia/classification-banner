@@ -29,9 +29,9 @@ except:
     try:
         import Gtk
     except:
-        print("Error: DISPLAY environment variable not set.")
-        sys.exit(1)
-
+#       print("Error: DISPLAY environment variable not set.")
+#       sys.exit(1)
+        quit()
 
 # Returns Username
 def get_user():
